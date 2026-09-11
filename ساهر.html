@@ -1,3 +1,301 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI برمج بنفسي ساهر</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px #bbb;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        textarea, input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .learn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .ask {
+            background: #4caf50;
+            color: white;
+        }
+
+        .clear {
+            background: #f44336;
+            color: white;
+        }
+
+        #answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: #eee;
+            border-radius: 10px;
+            min-height: 30px;
+        }
+
+        #count {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>🤖 AI من الصفر</h1>
+
+    <p>
+        النموذج لا يحتوي على معلومات جاهزة.
+        أنت الذي تعلّمه.
+    </p>
+
+    <h3>📚 تدريب النموذج</h3>
+
+    <input id="question"
+           placeholder="اكتب السؤال الذي تريد تعليمي إياه">
+
+    <textarea id="correctAnswer"
+              placeholder="اكتب الإجابة الصحيحة"></textarea>
+
+    <button class="learn" onclick="learn()">
+        🧠 علّم النموذج
+    </button>
+
+    <h3>💬 اسأل النموذج</h3>
+
+    <input id="userQuestion"
+           placeholder="اكتب سؤالك هنا">
+
+    <button class="ask" onclick="ask()">
+        🤖 اسأل AI
+    </button>
+
+    <div id="answer">
+        لم تسأل النموذج بعد.
+    </div>
+
+    <p id="count">
+        عدد المعلومات التي تعلمها: 0
+    </p>
+
+    <button class="clear" onclick="clearMemory()">
+        🗑️ مسح كل ما تعلمه
+    </button>
+
+</div>
+
+<script>
+
+    const initialKnowledge = [
+        // --- أساسيات البرمجة ---
+        { "question": "ما هي البرمجة", "answer": "البرمجة هي عملية كتابة تعليمات وأوامر للحاسوب لتنفيذ مهام محددة باستخدام لغات برمجة." },
+        { "question": "ما هي لغة جافاسكريبت", "answer": "هي لغة برمجة عالية المستوى تُستخدم أساساً لإضافة التفاعلية والحيوية لصفحات الويب." },
+        { "question": "ما هي لغة جافاسكريبت javascript", "answer": "هي لغة برمجة عالية المستوى تُستخدم أساساً لإضافة التفاعلية والحيوية لصفحات الويب." }
+    ];
+
+    // ==========================================
+    // 1. إضافة قائمة شاملة بعواصم العالم
+    // ==========================================
+    const capitals = [
+        ["مصر", "القاهرة"], ["السعودية", "الرياض"], ["الإمارات", "أبوظبي"], ["الكويت", "مدينة الكويت"],
+        ["قطر", "الدوحة"], ["البحرين", "المنامة"], ["سلطنة عمان", "مسقط"], ["الأردن", "عمان"],
+        ["فلسطين", "القدس الشريف"], ["لبنان", "بيروت"], ["سوريا", "دمشق"], ["العراق", "بغداد"],
+        ["المغرب", "الرباط"], ["الجزائر", "الجزائر العاصمة"], ["تونس", "تونس"], ["ليبيا", "طرابلس"],
+        ["السودان", "الخرطوم"], ["اليمن", "صنعاء"], ["الصومال", "مقديشو"], ["جيبوتي", "جيبوتي"],
+        ["موريتانيا", "نواكشوط"], ["جزر القمر", "מורوني"], ["فرنسا", "باريس"], ["ألمانيا", "برلين"],
+        ["إيطاليا", "روما"], ["المملكة المتحدة", "لندن"], ["الولايات المتحدة", "واشنطن العاصمة"],
+        ["الصين", "بكين"], ["اليابان", "طوكيو"], ["روسيا", "موسكو"], ["تركيا", "أنقرة"],
+        ["إسبانيا", "مدريد"], ["كندا", "أوتاوا"], ["أستراليا", "كانبرا"], ["البرتغال", "لشبونة"],
+        ["اليونان", "أثينا"], ["هولندا", "أمستردام"], ["بلجيكا", "بروكسل"], ["السويد", "ستوكهولم"],
+        ["النرويج", "أوسلو"], ["سويسرا", "برن"], ["النمسا", "فيينا"], ["الهند", "نيودلهي"],
+        ["باكستان", "إسلام آباد"], ["إيران", "طهران"], ["كوريا الجنوبية", "سيول"]
+    ];
+
+    capitals.forEach(item => {
+        initialKnowledge.push({ "question": `ما هي عاصمة ${item[0]}`, "answer": `عاصمة ${item[0]} هي ${item[1]}.` });
+        initialKnowledge.push({ "question": `عاصمة ${item[0]}`, "answer": `عاصمة ${item[0]} هي ${item[1]}.` });
+    });
+
+    // ==========================================
+    // 2. إضافة قاموس إنجليزي - عربي شامل
+    // ==========================================
+    const dictionary = [
+        ["apple", "تفاحة"], ["book", "كتاب"], ["computer", "حاسوب"], ["cat", "قطة"],
+        ["dog", "كلب"], ["house", "منزل"], ["school", "مدرسة"], ["car", "سيارة"],
+        ["water", "ماء"], ["sun", "شمس"], ["moon", "قمر"], ["friend", "صديق"],
+        ["love", "حب"], ["peace", "سلام"], ["science", "علوم"], ["math", "رياضيات"],
+        ["history", "تاريخ"], ["language", "لغة"], ["english", "إنجليزي"], ["arabic", "عربي"],
+        ["hello", "مرحباً"], ["goodbye", "مع السلامة"], ["yes", "نعم"], ["no", "لا"],
+        ["study", "دراسة"], ["learn", "يتعلم"], ["smart", "ذكي"], ["code", "كود/شفرة"]
+    ];
+
+    dictionary.forEach(word => {
+        initialKnowledge.push({ "question": `ما معنى كلمة ${word[0]}`, "answer": `معنى كلمة ${word[0]} باللغة العربية هو: ${word[1]}.` });
+        initialKnowledge.push({ "question": `ترجمة كلمة ${word[0]}`, "answer": `ترجمة كلمة ${word[0]} هي: ${word[1]}.` });
+        initialKnowledge.push({ "question": `${word[0]} بالعربي`, "answer": `معنى ${word[0]} هو: ${word[1]}.` });
+    });
+
+    // ==========================================
+    // 3. العمليات الحسابية الشاملة
+    // ==========================================
+    for (let i = 1; i <= 50; i++) {
+        initialKnowledge.push({ "question": `${i}+${i}`, "answer": `حاصل جمع ${i} + ${i} يساوي ${i+i}.` });
+        initialKnowledge.push({ "question": `${i}*${i}`, "answer": `حاصل ضرب ${i} × ${i} يساوي ${i*i}.` });
+        initialKnowledge.push({ "question": `كم يساوي ${i} زائد ${i}`, "answer": `ناتج ${i} + ${i} يساوي ${i+i}.` });
+    }
+
+    let memory = JSON.parse(
+        localStorage.getItem("myAI_memory")
+    ) || initialKnowledge;
+
+    function cleanText(text) {
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[؟?!.,،؛]/g, "")
+            .replace(/\s+/g, " ");
+    }
+
+    function learn() {
+        let question = document.getElementById("question").value.trim();
+        let answer = document.getElementById("correctAnswer").value.trim();
+
+        if (question === "" || answer === "") {
+            alert("اكتب السؤال والإجابة أولًا");
+            return;
+        }
+
+        memory.push({
+            question: question,
+            answer: answer
+        });
+
+        localStorage.setItem("myAI_memory", JSON.stringify(memory));
+
+        document.getElementById("question").value = "";
+        document.getElementById("correctAnswer").value = "";
+
+        updateCount();
+        alert("🧠 تم تعليم النموذج!");
+    }
+
+    function similarity(text1, text2) {
+        let words1 = cleanText(text1).split(" ").filter(w => w.length > 0);
+        let words2 = cleanText(text2).split(" ").filter(w => w.length > 0);
+
+        if (words1.length === 0 || words2.length === 0) return 0;
+
+        let common = 0;
+        for (let word of words1) {
+            if (words2.includes(word)) {
+                common++;
+            }
+        }
+
+        return (2 * common) / (words1.length + words2.length);
+    }
+
+    function ask() {
+        let question = document.getElementById("userQuestion").value.trim();
+
+        if (question === "") {
+            alert("اكتب سؤالًا أولًا");
+            return;
+        }
+
+        // دعم العمليات الحسابية المباشرة
+        let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
+        if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
+            try {
+                let result = eval(cleanMath);
+                document.getElementById("answer").innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
+                return;
+            } catch (e) {}
+        }
+
+        if (memory.length === 0) {
+            document.getElementById("answer").innerText = "🤖 برمجني الأول";
+            return;
+        }
+
+        let best = null;
+        let bestScore = 0;
+
+        for (let item of memory) {
+            let score = similarity(question, item.question);
+            if (score > bestScore) {
+                bestScore = score;
+                best = item;
+            }
+        }
+
+        if (best && bestScore >= 0.75) {
+            document.getElementById("answer").innerText = "🤖 " + best.answer;
+        } else {
+            document.getElementById("answer").innerText = "🤖 برمجني على هذه المعلومات اولا لان ساهر لم يخبرني بهذا 😅";
+        }
+    }
+
+    function updateCount() {
+        document.getElementById("count").innerText =
+            "عدد المعلومات التي تعلمها: " + memory.length;
+    }
+
+    function clearMemory() {
+        let confirmDelete = confirm("هل تريد مسح كل المعلومات التي تعلمها النموذج؟");
+
+        if (confirmDelete) {
+            memory = [];
+            localStorage.removeItem("myAI_memory");
+            updateCount();
+            document.getElementById("answer").innerText = "🤖 تم مسح الذاكرة. برمجني الأول";
+        }
+    }
+
+    updateCount();
+
+</script>
+
+</body>
+</html>
 
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
