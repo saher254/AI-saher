@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI يبدأ من الصفر</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .box {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 3px 15px #bbb;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        textarea, input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .learn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .ask {
+            background: #4caf50;
+            color: white;
+        }
+
+        .clear {
+            background: #f44336;
+            color: white;
+        }
+
+        #answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: #eee;
+            border-radius: 10px;
+            min-height: 30px;
+        }
+
+        #count {
+            text-align: center;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h1>🤖 AI من الصفر</h1>
+
+    <p>
+        النموذج لا يحتوي على معلومات جاهزة.
+        أنت الذي تعلّمه.
+    </p>
+
+    <h3>📚 تدريب النموذج</h3>
+
+    <input id="question"
+           placeholder="اكتب السؤال الذي تريد تعليمي إياه">
+
+    <textarea id="correctAnswer"
+              placeholder="اكتب الإجابة الصحيحة"></textarea>
+
+    <button class="learn" onclick="learn()">
+        🧠 علّم النموذج
+    </button>
+
+    <h3>💬 اسأل النموذج</h3>
+
+    <input id="userQuestion"
+           placeholder="اكتب سؤالك هنا">
+
+    <button class="ask" onclick="ask()">
+        🤖 اسأل AI
+    </button>
+
+    <div id="answer">
+        لم تسأل النموذج بعد.
+    </div>
+
+    <p id="count">
+        عدد المعلومات التي تعلمها: 0
+    </p>
+
+    <button class="clear" onclick="clearMemory()">
+        🗑️ مسح كل ما تعلمه
+    </button>
+
+</div>
+
+<script>
+
+    // ==========================================
+    // ذاكرة النموذج
+    // تبدأ فارغة تمامًا
+    // ==========================================
+
+    let memory = JSON.parse(
+        localStorage.getItem("myAI_memory")
+    ) || [];
+
+
+    // ==========================================
+    // تنظيف النص
+    // ==========================================
+
+    function cleanText(text) {
+
+        return text
+            .toLowerCase()
+            .trim()
+            .replace(/[؟?!.,،؛]/g, "")
+            .replace(/\s+/g, " ");
+
+    }
+
+
+    // ==========================================
+    // تدريب النموذج
+    // ==========================================
+
+    function learn() {
+
+        let question =
+            document.getElementById("question").value.trim();
+
+        let answer =
+            document.getElementById("correctAnswer").value.trim();
+
+
+        if (question === "" || answer === "") {
+
+            alert("اكتب السؤال والإجابة أولًا");
+
+            return;
+        }
+
+
+        let cleanQuestion = cleanText(question);
+
+
+        // إذا كان السؤال موجودًا من قبل
+        let old = memory.find(
+            item => item.question === cleanQuestion
+        );
+
+
+        if (old) {
+
+            old.answer = answer;
+
+        } else {
+
+            memory.push({
+
+                question: cleanQuestion,
+                answer: answer
+
+            });
+
+        }
+
+
+        // حفظ الذاكرة
+        localStorage.setItem(
+            "myAI_memory",
+            JSON.stringify(memory)
+        );
+
+
+        document.getElementById("question").value = "";
+        document.getElementById("correctAnswer").value = "";
+
+
+        updateCount();
+
+
+        alert("🧠 تم تعليم النموذج!");
+
+    }
+
+
+    // ==========================================
+    // البحث عن أقرب سؤال
+    // ==========================================
+
+    function similarity(text1, text2) {
+
+        let words1 = cleanText(text1).split(" ");
+        let words2 = cleanText(text2).split(" ");
+
+
+        let common = 0;
+
+
+        for (let word of words1) {
+
+            if (word.length > 1 &&
+                words2.includes(word)) {
+
+                common++;
+
+            }
+
+        }
+
+
+        if (words1.length === 0) return 0;
+
+
+        return common /
+               Math.max(words1.length, words2.length);
+
+    }
+
+
+    // ==========================================
+    // سؤال النموذج
+    // ==========================================
+
+    function ask() {
+
+        let question =
+            document.getElementById("userQuestion").value.trim();
+
+
+        if (question === "") {
+
+            alert("اكتب سؤالًا أولًا");
+
+            return;
+
+        }
+
+
+        if (memory.length === 0) {
+
+            document.getElementById("answer").innerText =
+                "🤖 أنا لا أعرف شيئًا حتى الآن. علّمني أولًا!";
+
+            return;
+
+        }
+
+
+        let best = null;
+        let bestScore = 0;
+
+
+        // يبحث في الأشياء التي تعلمها
+        for (let item of memory) {
+
+            let score =
+                similarity(question, item.question);
+
+
+            if (score > bestScore) {
+
+                bestScore = score;
+                best = item;
+
+            }
+
+        }
+
+
+        // إذا وجد سؤالًا قريبًا
+        if (best && bestScore >= 0.25) {
+
+            document.getElementById("answer").innerText =
+                "🤖 " + best.answer;
+
+        } else {
+
+            document.getElementById("answer").innerText =
+                "🤖 لا أعرف الإجابة. علّمني إياها أولًا.";
+
+        }
+
+    }
+
+
+    // ==========================================
+    // عدد المعلومات التي تعلمها
+    // ==========================================
+
+    function updateCount() {
+
+        document.getElementById("count").innerText =
+            "عدد المعلومات التي تعلمها: " +
+            memory.length;
+
+    }
+
+
+    // ==========================================
+    // مسح الذاكرة
+    // ==========================================
+
+    function clearMemory() {
+
+        let confirmDelete =
+            confirm(
+                "هل تريد مسح كل المعلومات التي تعلمها النموذج؟"
+            );
+
+
+        if (confirmDelete) {
+
+            memory = [];
+
+            localStorage.removeItem("myAI_memory");
+
+            updateCount();
+
+            document.getElementById("answer").innerText =
+                "🤖 تم مسح الذاكرة. أنا الآن أبدأ من الصفر.";
+
+        }
+
+    }
+
+
+    // تحديث العدد عند تشغيل الصفحة
+    updateCount();
+
+</script>
+
+</body>
+</html>
