@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI ساهر - النسخة السحابية</title>
+    <title>AI ساهر</title>
 
-    <!-- استيراد خط تجوال من جوجل -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
@@ -13,6 +12,7 @@
     <style>
         * {
             font-family: 'Tajawal', Arial, sans-serif;
+            box-sizing: border-box;
         }
 
         body {
@@ -34,7 +34,6 @@
             border-radius: 24px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease;
         }
 
         h1 {
@@ -142,16 +141,14 @@
             box-shadow: 0 8px 25px rgba(17, 153, 142, 0.6);
         }
 
-        .clear {
-            background: #fee2e2;
-            color: #dc2626;
-            border: 2px solid #fecaca;
-            margin-top: 15px;
+        .save-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
 
-        .clear:hover {
-            background: #fecaca;
-            color: #b91c1c;
+        .save-btn:hover {
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
         }
 
         #answer {
@@ -167,22 +164,6 @@
             transition: all 0.3s;
             white-space: pre-wrap;
             word-wrap: break-word;
-        }
-
-        #count {
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            padding: 10px;
-            background: #f9fafb;
-            border-radius: 12px;
-        }
-
-        #count span {
-            font-weight: 700;
-            color: #6366f1;
-            font-size: 1.1rem;
         }
 
         .status-dot {
@@ -201,7 +182,72 @@
             100% { opacity: 1; }
         }
 
-        /* شريط التمرير المخصص */
+        /* مودال تعليم النموذج */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal h2 {
+            text-align: center;
+            color: #1a1a2e;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .modal .modal-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            background: #f3f4f6;
+            color: #374151;
+            margin-top: 10px;
+        }
+
+        .close-modal:hover {
+            background: #e5e7eb;
+        }
+
         ::-webkit-scrollbar {
             width: 8px;
         }
@@ -226,17 +272,6 @@
     <h1>🤖 AI ساهر</h1>
     <p class="subtitle">قاعدة معرفة مشتركة <span>مباشرة من السحابة <span class="status-dot"></span></span></p>
 
-    <h3><i>📚</i> تدريب النموذج</h3>
-    <p style="font-size: 0.85rem; color: #888; margin-top: -5px;">أضف سؤالاً وإجابته، وستكون متاحة للجميع فوراً.</p>
-
-    <input id="question" placeholder="اكتب السؤال الذي تريد تعليمي إياه">
-
-    <textarea id="correctAnswer" placeholder="اكتب الإجابة الصحيحة"></textarea>
-
-    <button class="learn" onclick="learn()">
-        🧠 علّم النموذج (حفظ في السحابة)
-    </button>
-
     <h3><i>💬</i> اسأل النموذج</h3>
 
     <input id="userQuestion" placeholder="اكتب سؤالك هنا">
@@ -246,26 +281,38 @@
     </button>
 
     <div id="answer">
-        مرحباً! أنا ساهر. تم ربطي بقاعدة بيانات سحابية. اسألني أي شيء أو علمني معلومة جديدة.
+        مرحباً! أنا ساهر. اسألني أي شيء أو علّمني معلومة جديدة.
     </div>
 
-    <p id="count">
-        جاري الاتصال بقاعدة البيانات... <span id="countNumber">0</span> معلومة متاحة للجميع.
-    </p>
-
-    <button class="clear" onclick="clearMemory()">
-        🗑️ مسح كل المعلومات (للمسؤول فقط)
+    <button class="learn" onclick="openModal()">
+        🧠 علّم النموذج
     </button>
 
 </div>
 
-<!-- استيراد Firebase SDK -->
-<script type="module">
-    // استيراد الدوال اللازمة من Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+<!-- مودال تعليم النموذج -->
+<div class="modal-overlay" id="learnModal">
+    <div class="modal">
+        <h2>🧠 علّم النموذج</h2>
+        <p class="modal-subtitle">أضف سؤالاً وإجابته، وستكون متاحة للجميع فوراً.</p>
 
-    // إعدادات Firebase الخاصة بك
+        <input id="question" placeholder="اكتب السؤال الذي تريد تعليمي إياه">
+        <textarea id="correctAnswer" placeholder="اكتب الإجابة الصحيحة"></textarea>
+
+        <button class="save-btn" id="saveLearnBtn" onclick="learn()">
+            💾 حفظ المعلومة في السحابة
+        </button>
+
+        <button class="close-modal" onclick="closeModal()">
+            ✖️ إغلاق
+        </button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
     const firebaseConfig = {
         apiKey: "AIzaSyAUmHcm0d0ErUph8l132llavVcUfwHWfic",
         authDomain: "gaming-platform-5ef6c.firebaseapp.com",
@@ -276,17 +323,14 @@
         measurementId: "G-GVYDLMTY22"
     };
 
-    // تهيئة Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const knowledgeCollection = collection(db, "knowledge");
 
-    // متغير عام لتخزين البيانات محلياً بعد جلبها من السحابة (لتسريع البحث)
     let memory = [];
-    // حالة التحميل
     let isLoading = true;
 
-    // دالة لتنظيف النص للمقارنة
+    // ============ تنظيف النص ============
     function cleanText(text) {
         return text
             .toLowerCase()
@@ -295,7 +339,7 @@
             .replace(/\s+/g, "");
     }
 
-    // دالة حساب التشابه (نفس المنطق السابق)
+    // ============ حساب التشابه ============
     function similarity(text1, text2) {
         let clean1 = cleanText(text1);
         let clean2 = cleanText(text2);
@@ -317,12 +361,10 @@
         return (2 * common) / (chars1.length + chars2.length);
     }
 
-    // دالة تحديث العداد وجلب البيانات من Firestore
+    // ============ تحميل البيانات من Firestore ============
     async function loadKnowledge() {
         try {
             isLoading = true;
-            document.getElementById("count").innerHTML = 'جاري تحميل البيانات من السحابة... <span id="countNumber">0</span>';
-            
             const querySnapshot = await getDocs(knowledgeCollection);
             const newMemory = [];
             querySnapshot.forEach((doc) => {
@@ -333,30 +375,45 @@
                     answer: data.answer
                 });
             });
-            
             memory = newMemory;
-            updateCount();
             isLoading = false;
         } catch (error) {
             console.error("خطأ في تحميل البيانات: ", error);
-            document.getElementById("count").innerHTML = '⚠️ تعذر الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.';
+            isLoading = false;
         }
     }
 
-    // دالة تحديث العداد
-    function updateCount() {
-        const countElement = document.getElementById("count");
-        if (memory.length > 0) {
-            countElement.innerHTML = `عدد المعلومات المتاحة للجميع: <span id="countNumber">${memory.length}</span>`;
-        } else {
-            countElement.innerHTML = 'لا توجد معلومات بعد. كن أول من يضيف معلومة! <span id="countNumber">0</span>';
-        }
-    }
+    // ============ فتح وإغلاق المودال ============
+    window.openModal = function() {
+        document.getElementById("learnModal").classList.add("show");
+        setTimeout(() => {
+            document.getElementById("question").focus();
+        }, 100);
+    };
 
-    // دالة التعليم (الحفظ في Firestore)
+    window.closeModal = function() {
+        document.getElementById("learnModal").classList.remove("show");
+    };
+
+    // إغلاق المودال عند الضغط خارجها
+    document.getElementById("learnModal").addEventListener("click", function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // إغلاق بزر Escape
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    // ============ تعليم النموذج (حفظ في Firestore) ============
     window.learn = async function() {
         let question = document.getElementById("question").value.trim();
         let answer = document.getElementById("correctAnswer").value.trim();
+        const btn = document.getElementById("saveLearnBtn");
 
         if (question === "" || answer === "") {
             alert("اكتب السؤال والإجابة أولًا");
@@ -368,44 +425,38 @@
             return;
         }
 
-        // تعطيل الزر لمنع النقر المتكرر
-        const learnBtn = document.querySelector('.learn');
-        learnBtn.disabled = true;
-        learnBtn.innerHTML = '⏳ جاري الحفظ...';
+        btn.disabled = true;
+        btn.innerHTML = '⏳ جاري الحفظ...';
 
         try {
-            // إضافة البيانات إلى Firestore
             const docRef = await addDoc(knowledgeCollection, {
                 question: question,
                 answer: answer,
                 timestamp: new Date()
             });
 
-            // إضافة البيانات إلى المصفوفة المحلية فوراً (بدون إعادة تحميل الصفحة)
             memory.push({
                 id: docRef.id,
                 question: question,
                 answer: answer
             });
 
-            // تفريغ الحقول
             document.getElementById("question").value = "";
             document.getElementById("correctAnswer").value = "";
-            
-            updateCount();
+
             alert("🧠 تم تعليم النموذج وحفظ المعلومة في السحابة بنجاح!");
-            
+            closeModal();
+
         } catch (error) {
             console.error("خطأ في الحفظ: ", error);
             alert("حدث خطأ أثناء الحفظ. تأكد من اتصالك بالإنترنت وإعدادات Firestore.");
         } finally {
-            // إعادة تفعيل الزر
-            learnBtn.disabled = false;
-            learnBtn.innerHTML = '🧠 علّم النموذج (حفظ في السحابة)';
+            btn.disabled = false;
+            btn.innerHTML = '💾 حفظ المعلومة في السحابة';
         }
     };
 
-    // دالة السؤال
+    // ============ السؤال ============
     window.ask = function() {
         let question = document.getElementById("userQuestion").value.trim();
 
@@ -454,48 +505,8 @@
         }
     };
 
-    // دالة المسح (حذف جميع الوثائق)
-    window.clearMemory = async function() {
-        if (!confirm("هل أنت متأكد من مسح كل المعلومات من قاعدة البيانات؟ لا يمكن التراجع عن هذا الإجراء!")) {
-            return;
-        }
-
-        if (isLoading) {
-            alert("يرجى الانتظار حتى يتم تحميل البيانات.");
-            return;
-        }
-
-        const clearBtn = document.querySelector('.clear');
-        clearBtn.disabled = true;
-        clearBtn.innerHTML = '⏳ جاري المسح...';
-
-        try {
-            // جلب جميع الوثائق لحذفها
-            const querySnapshot = await getDocs(knowledgeCollection);
-            const deletePromises = [];
-            querySnapshot.forEach((document) => {
-                deletePromises.push(deleteDoc(doc(db, "knowledge", document.id)));
-            });
-            
-            await Promise.all(deletePromises);
-            
-            memory = [];
-            updateCount();
-            document.getElementById("answer").innerText = "🤖 تم مسح جميع المعلومات من السحابة. برمجني من جديد!";
-            alert("تم مسح قاعدة البيانات بنجاح.");
-            
-        } catch (error) {
-            console.error("خطأ في المسح: ", error);
-            alert("حدث خطأ أثناء محاولة المسح. قد تحتاج إلى صلاحيات المسؤول.");
-        } finally {
-            clearBtn.disabled = false;
-            clearBtn.innerHTML = '🗑️ مسح كل المعلومات (للمسؤول فقط)';
-        }
-    };
-
-    // تشغيل تحميل البيانات عند فتح الصفحة
+    // ============ تشغيل ============
     loadKnowledge();
-
 </script>
 
 </body>
