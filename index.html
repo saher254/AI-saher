@@ -3,75 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI برمج بنفسي ساهر</title>
+    <title>AI ساهر - النسخة السحابية</title>
+
+    <!-- استيراد خط تجوال من جوجل -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        * {
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f2f2;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             margin: 0;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .box {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 3px 15px #bbb;
+            width: 100%;
+            max-width: 750px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 35px 30px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
         }
 
         h1 {
             text-align: center;
+            color: #1a1a2e;
+            margin-bottom: 5px;
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .subtitle span {
+            background: #e0e7ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+            color: #4338ca;
+        }
+
+        h3 {
+            color: #333;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h3 i {
+            font-style: normal;
+            font-size: 1.2rem;
         }
 
         textarea, input {
             width: 100%;
             box-sizing: border-box;
-            padding: 12px;
+            padding: 14px 16px;
             margin: 8px 0;
-            border: 1px solid #aaa;
-            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
             font-size: 16px;
+            background: #f9fafb;
+            transition: all 0.2s;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
 
         button {
             width: 100%;
-            padding: 13px;
-            margin: 6px 0;
+            padding: 15px;
+            margin: 8px 0;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
+        button:active {
+            transform: scale(0.98);
         }
 
         .learn {
-            background: #2196f3;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .learn:hover {
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
         }
 
         .ask {
-            background: #4caf50;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .ask:hover {
+            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.6);
         }
 
         .clear {
-            background: #f44336;
-            color: white;
+            background: #fee2e2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+            margin-top: 15px;
+        }
+
+        .clear:hover {
+            background: #fecaca;
+            color: #b91c1c;
         }
 
         #answer {
-            margin-top: 15px;
-            padding: 15px;
-            background: #eee;
-            border-radius: 10px;
-            min-height: 30px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 16px;
+            min-height: 50px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #1f2937;
+            border-right: 5px solid #6366f1;
+            transition: all 0.3s;
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
 
         #count {
             text-align: center;
-            color: #555;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        #count span {
+            font-weight: 700;
+            color: #6366f1;
+            font-size: 1.1rem;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            margin-left: 6px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        /* شريط التمرير المخصص */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a5b4fc;
         }
     </style>
 </head>
@@ -80,135 +223,70 @@
 
 <div class="box">
 
-    <h1>🤖 AI   ساهر</h1>
+    <h1>🤖 AI ساهر</h1>
+    <p class="subtitle">قاعدة معرفة مشتركة <span>مباشرة من السحابة <span class="status-dot"></span></span></p>
 
-    <p>
-        النموذج لا يحتوي على معلومات جاهزة.
-        أنت الذي تعلّمه.
-    </p>
+    <h3><i>📚</i> تدريب النموذج</h3>
+    <p style="font-size: 0.85rem; color: #888; margin-top: -5px;">أضف سؤالاً وإجابته، وستكون متاحة للجميع فوراً.</p>
 
-    <h3>📚 تدريب النموذج</h3>
+    <input id="question" placeholder="اكتب السؤال الذي تريد تعليمي إياه">
 
-    <input id="question"
-           placeholder="اكتب السؤال الذي تريد تعليمي إياه">
-
-    <textarea id="correctAnswer"
-              placeholder="اكتب الإجابة الصحيحة"></textarea>
+    <textarea id="correctAnswer" placeholder="اكتب الإجابة الصحيحة"></textarea>
 
     <button class="learn" onclick="learn()">
-        🧠 علّم النموذج
+        🧠 علّم النموذج (حفظ في السحابة)
     </button>
 
-    <h3>💬 اسأل النموذج</h3>
+    <h3><i>💬</i> اسأل النموذج</h3>
 
-    <input id="userQuestion"
-           placeholder="اكتب سؤالك هنا">
+    <input id="userQuestion" placeholder="اكتب سؤالك هنا">
 
     <button class="ask" onclick="ask()">
-        🤖 اسأل AI
+        🤖 اسأل AI ساهر
     </button>
 
     <div id="answer">
-        لم تسأل النموذج بعد.
+        مرحباً! أنا ساهر. تم ربطي بقاعدة بيانات سحابية. اسألني أي شيء أو علمني معلومة جديدة.
     </div>
 
     <p id="count">
-        عدد المعلومات التي تعلمها: 0
+        جاري الاتصال بقاعدة البيانات... <span id="countNumber">0</span> معلومة متاحة للجميع.
     </p>
 
     <button class="clear" onclick="clearMemory()">
-        🗑️ مسح كل ما تعلمه
+        🗑️ مسح كل المعلومات (للمسؤول فقط)
     </button>
 
 </div>
 
-<script>
+<!-- استيراد Firebase SDK -->
+<script type="module">
+    // استيراد الدوال اللازمة من Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const initialKnowledge = [
-        // --- أسئلة عامة وبرمجية ---
-        { "question": "ما هي عاصمة مصر", "answer": "عاصمة مصر هي القاهرة." },
-        { "question": "ما هي عاصمة السعودية", "answer": "عاصمة السعودية هي الرياض." },
-        { "question": "ما هي عاصمة الإمارات", "answer": "عاصمة الإمارات هي أبوظبي." },
-        { "question": "ما هي البرمجة", "answer": "البرمجة هي عملية كتابة تعليمات وأوامر للحاسوب لتنفيذ مهام محددة باستخدام لغات برمجة." },
-        { "question": "ما هي لغة جافاسكريبت", "answer": "هي لغة برمجة عالية المستوى تُستخدم أساساً لإضافة التفاعلية والحيوية لصفحات الويب." },
-        { "question": "ما هي لغة جافاسكريبت javascript", "answer": "هي لغة برمجة عالية المستوى تُستخدم أساساً لإضافة التفاعلية والحيوية لصفحات الويب." },
-        { "question": "ما الفرق بين let و const في جافاسكريبت", "answer": "let تسمح بتغيير قيمة المتغير لاحقاً، بينما const تُستخدم للمتغيرات الثابتة التي لا تتغير قيمتها." },
-        { "question": "ما هي قواعد البيانات DBMS", "answer": "أنظمة إدارة قواعد البيانات تُستخدم لتنظيم وتخزين واسترجاع البيانات بفعالية مثل MySQL." },
-        { "question": "ما هو المفتاح الرئيسي Primary Key في قواعد البيانات", "answer": "هو حقل فريد يحدد كل سجل في الجدول بشكل لا يتكرر ولا يقبل قيمة فارغة." },
-        { "question": "ما هي لغة SQL", "answer": "هي لغة الاستعلام الهيكلية تُستخدم للتعامل مع قواعد البيانات وتحديثها والاستعلام عنها." },
-        { "question": "ما هو بروتوكول HTTP", "answer": "هو بروتوكول نقل النص الفائق المستخدم لنقل صفحات الويب بين الخادم والمتصفح." }
-    ];
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+        apiKey: "AIzaSyAUmHcm0d0ErUph8l132llavVcUfwHWfic",
+        authDomain: "gaming-platform-5ef6c.firebaseapp.com",
+        projectId: "gaming-platform-5ef6c",
+        storageBucket: "gaming-platform-5ef6c.firebasestorage.app",
+        messagingSenderId: "332262507211",
+        appId: "1:332262507211:web:dd51b094b7d3e4ab68914e",
+        measurementId: "G-GVYDLMTY22"
+    };
 
-    // ==========================================
-    // إضافة جميع عواصم العالم والمدن الرئيسية سؤال وجواب
-    // ==========================================
-    const worldCapitals = [
-        ["مصر", "القاهرة"], ["السعودية", "الرياض"], ["الإمارات", "أبوظبي"], ["الكويت", "مدينة الكويت"],
-        ["قطر", "الدوحة"], ["البحرين", "المنامة"], ["سلطنة عمان", "مسقط"], ["الأردن", "عمان"],
-        ["فلسطين", "القدس الشريف"], ["لبنان", "بيروت"], ["سوريا", "دمشق"], ["العراق", "بغداد"],
-        ["المغرب", "الرباط"], ["الجزائر", "الجزائر العاصمة"], ["تونس", "تونس"], ["ليبيا", "طرابلس"],
-        ["السودان", "الخرطوم"], ["اليمن", "صنعاء"], ["الصومال", "مقديشو"], ["جيبوتي", "جيبوتي"],
-        ["موريتانيا", "نواكشوط"], ["جزر القمر", "מורوني"], ["فرنسا", "باريس"], ["ألمانيا", "برلين"],
-        ["إيطاليا", "روما"], ["المملكة المتحدة", "لندن"], ["الولايات المتحدة", "واشنطن العاصمة"],
-        ["الصين", "بكين"], ["اليابان", "طوكيو"], ["روسيا", "موسكو"], ["تركيا", "أنقرة"],
-        ["إسبانيا", "مدريد"], ["كندا", "أوتاوا"], ["أستراليا", "كانبرا"], ["البرتغال", "لشبونة"],
-        ["اليونان", "أثينا"], ["هولندا", "أمستردام"], ["بلجيكا", "بروكسل"], ["السويد", "ستوكهولم"],
-        ["النرويج", "أوسلو"], ["سويسرا", "برن"], ["النمسا", "فيينا"], ["الهند", "نيودلهي"],
-        ["باكستان", "إسلام آباد"], ["إيران", "طهران"], ["كوريا الجنوبية", "سيول"], ["البرازيل", "برازيليا"],
-        ["الأرجنتين", "بوينس آيرس"], ["جنوب أفريقيا", "بريتوريا"]
-    ];
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const knowledgeCollection = collection(db, "knowledge");
 
-    worldCapitals.forEach(item => {
-        initialKnowledge.push({ "question": `ما هي عاصمة ${item[0]}`, "answer": `عاصمة ${item[0]} هي ${item[1]}.` });
-        initialKnowledge.push({ "question": `عاصمة ${item[0]}`, "answer": `عاصمة ${item[0]} هي ${item[1]}.` });
-        initialKnowledge.push({ "question": `ما عاصمة ${item[0]}`, "answer": `عاصمة ${item[0]} هي ${item[1]}.` });
-    });
+    // متغير عام لتخزين البيانات محلياً بعد جلبها من السحابة (لتسريع البحث)
+    let memory = [];
+    // حالة التحميل
+    let isLoading = true;
 
-    // ==========================================
-    // توليد كافة العمليات الحسابية الشاملة بالرموز والعربي
-    // ==========================================
-    for (let i = 1; i <= 100; i++) {
-        initialKnowledge.push({ "question": `${i}+${i}`, "answer": `حاصل جمع ${i} + ${i} يساوي ${i+i}.` });
-        initialKnowledge.push({ "question": `${i}*${i}`, "answer": `حاصل ضرب ${i} × ${i} يساوي ${i*i}.` });
-        initialKnowledge.push({ "question": `${i*2}-${i}`, "answer": `حاصل طرح ${i} من ${i*2} يساوي ${i}.` });
-        initialKnowledge.push({ "question": `${i*2}/${2}`, "answer": `ناتج قسمة ${i*2} على 2 يساوي ${i}.` });
-
-        initialKnowledge.push({ "question": `ما هو حاصل ضرب ${i} في ${i}`, "answer": `حاصل ضرب ${i} في ${i} يساوي ${i*i}.` });
-        initialKnowledge.push({ "question": `ما هو مجموع ${i} زائد ${i}`, "answer": `مجموع ${i} زائد ${i} يساوي ${i+i}.` });
-        initialKnowledge.push({ "question": `ما هو حاصل طرح ${i} من ${i*2}`, "answer": `حاصل طرح ${i} من ${i*2} يساوي ${i}.` });
-        initialKnowledge.push({ "question": `ما هو ناتج قسمة ${i*2} على 2`, "answer": `ناتج قسمة ${i*2} على 2 يساوي ${i}.` });
-        initialKnowledge.push({ "question": `ما هو مربع العدد ${i}`, "answer": `مربع العدد ${i} يساوي ${i*i}.` });
-        initialKnowledge.push({ "question": `ما هو الجذر التربيعي للعدد ${i*i}`, "answer": `الجذر التربيعي للعدد ${i*i} يساوي ${i}.` });
-        initialKnowledge.push({ "question": `ما هي نسبة ${i} بالمئة من 100`, "answer": `نسبة ${i}% من 100 تساوي ${i}.` });
-        initialKnowledge.push({ "question": `ما هو باقي قسمة ${i} على 2`, "answer": `باقي قسمة ${i} على 2 هو ${i % 2}.` });
-
-        if (i <= 20) {
-            for (let j = 1; j <= 20; j++) {
-                initialKnowledge.push({ "question": `${i}+${j}`, "answer": `ناتج ${i} + ${j} يساوي ${i + j}.` });
-                initialKnowledge.push({ "question": `${i}-${j}`, "answer": `ناتج ${i} - ${j} يساوي ${i - j}.` });
-                initialKnowledge.push({ "question": `${i}*${j}`, "answer": `ناتج ${i} × ${j} يساوي ${i * j}.` });
-                initialKnowledge.push({ "question": `كم يساوي ${i} زائد ${j}`, "answer": `ناتج ${i} + ${j} يساوي ${i + j}.` });
-                initialKnowledge.push({ "question": `كم يساوي ${i} ناقص ${j}`, "answer": `ناتج ${i} - ${j} يساوي ${i - j}.` });
-                initialKnowledge.push({ "question": `كم يساوي ${i} في ${j}`, "answer": `ناتج ${i} × ${j} يساوي ${i * j}.` });
-            }
-        }
-    }
-
-    const chemElements = [
-        ["الهيدروجين", "H", 1], ["الهيليوم", "He", 2], ["الليثيوم", "Li", 3], ["الكربون", "C", 6],
-        ["النيتروجين", "N", 7], ["الأكسجين", "O", 8], ["الصوديوم", "Na", 11], ["الحديد", "Fe", 26],
-        ["النحاس", "Cu", 29], ["الذهب", "Au", 79], ["الفضة", "Ag", 47]
-    ];
-
-    chemElements.forEach(elem => {
-        initialKnowledge.push({ "question": `ما هو الرمز الكيميائي للعنصر ${elem[0]}`, "answer": `الرمز الكيميائي لـ ${elem[0]} هو ${elem[1]}.` });
-        initialKnowledge.push({ "question": `ما هو العدد الذري للعنصر ${elem[0]}`, "answer": `العدد الذري لـ ${elem[0]} هو ${elem[2]}.` });
-    });
-
-    let memory = JSON.parse(
-        localStorage.getItem("myAI_memory")
-    ) || initialKnowledge;
-
+    // دالة لتنظيف النص للمقارنة
     function cleanText(text) {
         return text
             .toLowerCase()
@@ -217,7 +295,66 @@
             .replace(/\s+/g, "");
     }
 
-    function learn() {
+    // دالة حساب التشابه (نفس المنطق السابق)
+    function similarity(text1, text2) {
+        let clean1 = cleanText(text1);
+        let clean2 = cleanText(text2);
+
+        if (clean1 === clean2) return 1.0;
+
+        let chars1 = clean1.split("");
+        let chars2 = clean2.split("");
+
+        if (chars1.length === 0 || chars2.length === 0) return 0;
+
+        let common = 0;
+        for (let char of chars1) {
+            if (chars2.includes(char)) {
+                common++;
+            }
+        }
+
+        return (2 * common) / (chars1.length + chars2.length);
+    }
+
+    // دالة تحديث العداد وجلب البيانات من Firestore
+    async function loadKnowledge() {
+        try {
+            isLoading = true;
+            document.getElementById("count").innerHTML = 'جاري تحميل البيانات من السحابة... <span id="countNumber">0</span>';
+            
+            const querySnapshot = await getDocs(knowledgeCollection);
+            const newMemory = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                newMemory.push({
+                    id: doc.id,
+                    question: data.question,
+                    answer: data.answer
+                });
+            });
+            
+            memory = newMemory;
+            updateCount();
+            isLoading = false;
+        } catch (error) {
+            console.error("خطأ في تحميل البيانات: ", error);
+            document.getElementById("count").innerHTML = '⚠️ تعذر الاتصال بقاعدة البيانات. تأكد من إعدادات Firebase.';
+        }
+    }
+
+    // دالة تحديث العداد
+    function updateCount() {
+        const countElement = document.getElementById("count");
+        if (memory.length > 0) {
+            countElement.innerHTML = `عدد المعلومات المتاحة للجميع: <span id="countNumber">${memory.length}</span>`;
+        } else {
+            countElement.innerHTML = 'لا توجد معلومات بعد. كن أول من يضيف معلومة! <span id="countNumber">0</span>';
+        }
+    }
+
+    // دالة التعليم (الحفظ في Firestore)
+    window.learn = async function() {
         let question = document.getElementById("question").value.trim();
         let answer = document.getElementById("correctAnswer").value.trim();
 
@@ -226,49 +363,50 @@
             return;
         }
 
-        let cleanQuestion = cleanText(question);
-        let old = memory.find(item => cleanText(item.question) === cleanQuestion);
+        if (isLoading) {
+            alert("البيانات لا تزال قيد التحميل، يرجى الانتظار لحظة.");
+            return;
+        }
 
-        if (old) {
-            old.answer = answer;
-        } else {
+        // تعطيل الزر لمنع النقر المتكرر
+        const learnBtn = document.querySelector('.learn');
+        learnBtn.disabled = true;
+        learnBtn.innerHTML = '⏳ جاري الحفظ...';
+
+        try {
+            // إضافة البيانات إلى Firestore
+            const docRef = await addDoc(knowledgeCollection, {
+                question: question,
+                answer: answer,
+                timestamp: new Date()
+            });
+
+            // إضافة البيانات إلى المصفوفة المحلية فوراً (بدون إعادة تحميل الصفحة)
             memory.push({
+                id: docRef.id,
                 question: question,
                 answer: answer
             });
+
+            // تفريغ الحقول
+            document.getElementById("question").value = "";
+            document.getElementById("correctAnswer").value = "";
+            
+            updateCount();
+            alert("🧠 تم تعليم النموذج وحفظ المعلومة في السحابة بنجاح!");
+            
+        } catch (error) {
+            console.error("خطأ في الحفظ: ", error);
+            alert("حدث خطأ أثناء الحفظ. تأكد من اتصالك بالإنترنت وإعدادات Firestore.");
+        } finally {
+            // إعادة تفعيل الزر
+            learnBtn.disabled = false;
+            learnBtn.innerHTML = '🧠 علّم النموذج (حفظ في السحابة)';
         }
+    };
 
-        localStorage.setItem("myAI_memory", JSON.stringify(memory));
-
-        document.getElementById("question").value = "";
-        document.getElementById("correctAnswer").value = "";
-
-        updateCount();
-        alert("🧠 تم تعليم النموذج!");
-    }
-
-    function similarity(text1, text2) {
-        let clean1 = cleanText(text1);
-        let clean2 = cleanText(text2);
-
-        if (clean1 === clean2) return 1.0;
-
-        let words1 = clean1.split("");
-        let words2 = clean2.split("");
-
-        if (words1.length === 0 || words2.length === 0) return 0;
-
-        let common = 0;
-        for (let char of words1) {
-            if (words2.includes(char)) {
-                common++;
-            }
-        }
-
-        return (2 * common) / (words1.length + words2.length);
-    }
-
-    function ask() {
+    // دالة السؤال
+    window.ask = function() {
         let question = document.getElementById("userQuestion").value.trim();
 
         if (question === "") {
@@ -276,18 +414,25 @@
             return;
         }
 
-        // دعم إضافي للعمليات الحسابية المباشرة عبر الرموز
+        if (isLoading) {
+            document.getElementById("answer").innerText = "🤖 جاري تحميل قاعدة المعرفة، يرجى الانتظار...";
+            return;
+        }
+
+        const answerDiv = document.getElementById("answer");
+
+        // دعم العمليات الحسابية المباشرة
         let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
         if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
             try {
                 let result = eval(cleanMath);
-                document.getElementById("answer").innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
+                answerDiv.innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
                 return;
             } catch (e) {}
         }
 
         if (memory.length === 0) {
-            document.getElementById("answer").innerText = "🤖 برمجني الأول";
+            answerDiv.innerText = "🤖 قاعدة البيانات فارغة حالياً. قم بتعليمي أول معلومة!";
             return;
         }
 
@@ -303,29 +448,53 @@
         }
 
         if (best && bestScore >= 0.75) {
-            document.getElementById("answer").innerText = "🤖 " + best.answer;
+            answerDiv.innerText = "🤖 " + best.answer;
         } else {
-            document.getElementById("answer").innerText = "🤖 برمجني على هذه المعلومات اولا لان ساهر لم يخبرني بهذا 😅";
+            answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
         }
-    }
+    };
 
-    function updateCount() {
-        document.getElementById("count").innerText =
-            "عدد المعلومات التي تعلمها: " + memory.length;
-    }
+    // دالة المسح (حذف جميع الوثائق)
+    window.clearMemory = async function() {
+        if (!confirm("هل أنت متأكد من مسح كل المعلومات من قاعدة البيانات؟ لا يمكن التراجع عن هذا الإجراء!")) {
+            return;
+        }
 
-    function clearMemory() {
-        let confirmDelete = confirm("هل تريد مسح كل المعلومات التي تعلمها النموذج؟");
+        if (isLoading) {
+            alert("يرجى الانتظار حتى يتم تحميل البيانات.");
+            return;
+        }
 
-        if (confirmDelete) {
+        const clearBtn = document.querySelector('.clear');
+        clearBtn.disabled = true;
+        clearBtn.innerHTML = '⏳ جاري المسح...';
+
+        try {
+            // جلب جميع الوثائق لحذفها
+            const querySnapshot = await getDocs(knowledgeCollection);
+            const deletePromises = [];
+            querySnapshot.forEach((document) => {
+                deletePromises.push(deleteDoc(doc(db, "knowledge", document.id)));
+            });
+            
+            await Promise.all(deletePromises);
+            
             memory = [];
-            localStorage.removeItem("myAI_memory");
             updateCount();
-            document.getElementById("answer").innerText = "🤖 تم مسح الذاكرة برمجني الأول";
+            document.getElementById("answer").innerText = "🤖 تم مسح جميع المعلومات من السحابة. برمجني من جديد!";
+            alert("تم مسح قاعدة البيانات بنجاح.");
+            
+        } catch (error) {
+            console.error("خطأ في المسح: ", error);
+            alert("حدث خطأ أثناء محاولة المسح. قد تحتاج إلى صلاحيات المسؤول.");
+        } finally {
+            clearBtn.disabled = false;
+            clearBtn.innerHTML = '🗑️ مسح كل المعلومات (للمسؤول فقط)';
         }
-    }
+    };
 
-    updateCount();
+    // تشغيل تحميل البيانات عند فتح الصفحة
+    loadKnowledge();
 
 </script>
 
