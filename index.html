@@ -10,24 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        * {
-            font-family: 'Tajawal', Arial, sans-serif;
-            box-sizing: border-box;
-        }
+        * { font-family: 'Tajawal', Arial, sans-serif; box-sizing: border-box; }
 
         body {
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 20px; min-height: 100vh;
+            display: flex; justify-content: center; align-items: center;
         }
 
         .box {
-            width: 100%;
-            max-width: 750px;
+            width: 100%; max-width: 750px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 35px 30px;
@@ -37,143 +29,88 @@
         }
 
         h1 {
-            text-align: center;
-            color: #1a1a2e;
-            margin-bottom: 5px;
-            font-weight: 700;
-            font-size: 2.2rem;
+            text-align: center; color: #1a1a2e;
+            margin-bottom: 5px; font-weight: 700; font-size: 2.2rem;
         }
 
         .subtitle {
-            text-align: center;
-            color: #666;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
+            text-align: center; color: #666;
+            margin-top: 0; margin-bottom: 25px; font-size: 0.95rem;
         }
 
         .subtitle span {
-            background: #e0e7ff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-weight: 500;
-            color: #4338ca;
+            background: #e0e7ff; padding: 4px 12px;
+            border-radius: 20px; font-weight: 500; color: #4338ca;
         }
 
         h3 {
-            color: #333;
-            margin-top: 25px;
-            margin-bottom: 10px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: #333; margin-top: 25px; margin-bottom: 10px;
+            font-weight: 500; display: flex; align-items: center; gap: 8px;
         }
 
-        h3 i {
-            font-style: normal;
-            font-size: 1.2rem;
-        }
+        h3 i { font-style: normal; font-size: 1.2rem; }
 
         textarea, input {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 14px 16px;
-            margin: 8px 0;
-            border: 2px solid #e5e7eb;
-            border-radius: 14px;
-            font-size: 16px;
-            background: #f9fafb;
+            width: 100%; box-sizing: border-box;
+            padding: 14px 16px; margin: 8px 0;
+            border: 2px solid #e5e7eb; border-radius: 14px;
+            font-size: 16px; background: #f9fafb;
             transition: all 0.2s;
             font-family: 'Tajawal', Arial, sans-serif;
         }
 
         textarea:focus, input:focus {
-            outline: none;
-            border-color: #6366f1;
-            background: white;
+            outline: none; border-color: #6366f1; background: white;
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+        textarea { resize: vertical; min-height: 80px; }
 
         button {
-            width: 100%;
-            padding: 15px;
-            margin: 8px 0;
-            border: none;
-            border-radius: 14px;
-            font-size: 17px;
-            font-weight: 600;
-            cursor: pointer;
+            width: 100%; padding: 15px; margin: 8px 0;
+            border: none; border-radius: 14px;
+            font-size: 17px; font-weight: 600; cursor: pointer;
             transition: all 0.2s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
             font-family: 'Tajawal', Arial, sans-serif;
         }
 
-        button:active {
-            transform: scale(0.98);
-        }
+        button:active { transform: scale(0.98); }
 
         .learn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-
-        .learn:hover {
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
+        .learn:hover { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6); }
 
         .ask {
             background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
         }
-
-        .ask:hover {
-            box-shadow: 0 8px 25px rgba(17, 153, 142, 0.6);
-        }
+        .ask:hover { box-shadow: 0 8px 25px rgba(17, 153, 142, 0.6); }
 
         .save-btn {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
-
-        .save-btn:hover {
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
-        }
+        .save-btn:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); }
 
         #answer {
-            margin-top: 20px;
-            padding: 20px;
-            background: #f3f4f6;
-            border-radius: 16px;
-            min-height: 50px;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            color: #1f2937;
-            border-right: 5px solid #6366f1;
+            margin-top: 20px; padding: 20px;
+            background: #f3f4f6; border-radius: 16px;
+            min-height: 50px; font-size: 1.05rem; line-height: 1.7;
+            color: #1f2937; border-right: 5px solid #6366f1;
             transition: all 0.3s;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            white-space: pre-wrap; word-wrap: break-word;
         }
 
         .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-            margin-left: 6px;
-            animation: pulse 2s infinite;
+            display: inline-block; width: 8px; height: 8px;
+            border-radius: 50%; background: #10b981;
+            margin-left: 6px; animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
@@ -182,86 +119,48 @@
             100% { opacity: 1; }
         }
 
-        /* مودال تعليم النموذج */
         .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            justify-content: center; align-items: center; padding: 20px;
         }
 
-        .modal-overlay.show {
-            display: flex;
-        }
+        .modal-overlay.show { display: flex; }
 
         .modal {
-            background: white;
-            padding: 30px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 550px;
+            background: white; padding: 30px;
+            border-radius: 24px; width: 100%; max-width: 550px;
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
             animation: modalIn 0.3s ease;
         }
 
         @keyframes modalIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .modal h2 {
-            text-align: center;
-            color: #1a1a2e;
-            margin-top: 0;
-            margin-bottom: 5px;
+            text-align: center; color: #1a1a2e;
+            margin-top: 0; margin-bottom: 5px;
         }
 
         .modal .modal-subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-top: 0;
-            margin-bottom: 20px;
+            text-align: center; color: #666;
+            font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;
         }
 
         .close-modal {
-            background: #f3f4f6;
-            color: #374151;
-            margin-top: 10px;
+            background: #f3f4f6; color: #374151; margin-top: 10px;
         }
+        .close-modal:hover { background: #e5e7eb; }
 
-        .close-modal:hover {
-            background: #e5e7eb;
-        }
-
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c7d2fe;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a5b4fc;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a5b4fc; }
     </style>
 </head>
 
@@ -290,7 +189,6 @@
 
 </div>
 
-<!-- مودال تعليم النموذج -->
 <div class="modal-overlay" id="learnModal">
     <div class="modal">
         <h2>🧠 علّم النموذج</h2>
@@ -330,38 +228,102 @@
     let memory = [];
     let isLoading = true;
 
-    // ============ تنظيف النص ============
-    function cleanText(text) {
+    // ============ كلمات الحشو اللي تتشال قبل المقارنة ============
+    const STOP_WORDS = [
+        "ما", "هي", "هو", "هم", "في", "من", "عن", "على", "الى", "إلى",
+        "ايه", "إيه", "ال", "هل", "كان", "كانت", "يكون", "تكون",
+        "يا", "بس", "دي", "ده", "دا", "اللي", "التي", "الذي"
+    ];
+
+    // ============ تنظيف النص وتقسيمه لكلمات ============
+    function normalizeText(text) {
         return text
             .toLowerCase()
             .trim()
-            .replace(/[؟?!.,،؛]/g, "")
-            .replace(/\s+/g, "");
+            .replace(/[؟?!.,،؛:]/g, "")
+            .replace(/[إأآا]/g, "ا")   // توحيد الألف
+            .replace(/ى/g, "ي")        // توحيد الياء
+            .replace(/ة/g, "ه")        // توحيد التاء المربوطة
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
-    // ============ حساب التشابه ============
-    function similarity(text1, text2) {
-        let clean1 = cleanText(text1);
-        let clean2 = cleanText(text2);
+    function getWords(text) {
+        const normalized = normalizeText(text);
+        return normalized
+            .split(" ")
+            .filter(w => w.length > 0 && !STOP_WORDS.includes(w));
+    }
 
-        if (clean1 === clean2) return 1.0;
+    // ============ مطابقة تامة ============
+    function exactMatch(q1, q2) {
+        return normalizeText(q1) === normalizeText(q2);
+    }
 
-        let chars1 = clean1.split("");
-        let chars2 = clean2.split("");
+    // ============ حساب التشابه بين كلمتين (Levenshtein مبسط) ============
+    function wordSimilarity(w1, w2) {
+        if (w1 === w2) return 1;
+        if (w1.length < 2 || w2.length < 2) return 0;
 
-        if (chars1.length === 0 || chars2.length === 0) return 0;
+        // لو واحدة بتبدأ بالتانية أو العكس
+        if (w1.startsWith(w2) || w2.startsWith(w1)) return 0.9;
 
+        // حساب الحروف المشتركة
         let common = 0;
-        for (let char of chars1) {
-            if (chars2.includes(char)) {
+        const w2Chars = w2.split("");
+        for (let ch of w1) {
+            const idx = w2Chars.indexOf(ch);
+            if (idx !== -1) {
                 common++;
+                w2Chars.splice(idx, 1);
             }
         }
-
-        return (2 * common) / (chars1.length + chars2.length);
+        return (2 * common) / (w1.length + w2.length);
     }
 
-    // ============ تحميل البيانات من Firestore ============
+    // ============ حساب نسبة تطابق السؤال بكلمة بكلمة ============
+    function questionSimilarity(userQ, storedQ) {
+        // 1. مطابقة تامة
+        if (exactMatch(userQ, storedQ)) return 1.0;
+
+        const userWords = getWords(userQ);
+        const storedWords = getWords(storedQ);
+
+        if (userWords.length === 0 || storedWords.length === 0) return 0;
+
+        // 2. نحسب لكل كلمة في سؤال المستخدم: هل فيه كلمة مطابقة في السؤال المخزن؟
+        let matchedWeight = 0;
+        let totalWeight = userWords.length;
+
+        for (let uw of userWords) {
+            let bestWordScore = 0;
+            for (let sw of storedWords) {
+                const score = wordSimilarity(uw, sw);
+                if (score > bestWordScore) bestWordScore = score;
+            }
+            matchedWeight += bestWordScore;
+        }
+
+        // 3. نسبة التطابق من جهة المستخدم
+        const userCoverage = matchedWeight / totalWeight;
+
+        // 4. نسبة التطابق من جهة السؤال المخزن (عشان نمنع الردود اللي فيها كلمات زيادة كتير)
+        let storedMatchedWeight = 0;
+        for (let sw of storedWords) {
+            let bestWordScore = 0;
+            for (let uw of userWords) {
+                const score = wordSimilarity(sw, uw);
+                if (score > bestWordScore) bestWordScore = score;
+            }
+            storedMatchedWeight += bestWordScore;
+        }
+        const storedCoverage = storedMatchedWeight / storedWords.length;
+
+        // 5. النسبة النهائية = متوسط الاتنين (لازم الاتنين يكونوا كويسين)
+        return (userCoverage + storedCoverage) / 2;
+    }
+
+    // ============ تحميل البيانات ============
     async function loadKnowledge() {
         try {
             isLoading = true;
@@ -377,39 +339,32 @@
             });
             memory = newMemory;
             isLoading = false;
+            console.log(`تم تحميل ${memory.length} معلومة من السحابة.`);
         } catch (error) {
             console.error("خطأ في تحميل البيانات: ", error);
             isLoading = false;
         }
     }
 
-    // ============ فتح وإغلاق المودال ============
+    // ============ فتح/إغلاق المودال ============
     window.openModal = function() {
         document.getElementById("learnModal").classList.add("show");
-        setTimeout(() => {
-            document.getElementById("question").focus();
-        }, 100);
+        setTimeout(() => document.getElementById("question").focus(), 100);
     };
 
     window.closeModal = function() {
         document.getElementById("learnModal").classList.remove("show");
     };
 
-    // إغلاق المودال عند الضغط خارجها
     document.getElementById("learnModal").addEventListener("click", function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
+        if (e.target === this) closeModal();
     });
 
-    // إغلاق بزر Escape
     document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") {
-            closeModal();
-        }
+        if (e.key === "Escape") closeModal();
     });
 
-    // ============ تعليم النموذج (حفظ في Firestore) ============
+    // ============ تعليم النموذج ============
     window.learn = async function() {
         let question = document.getElementById("question").value.trim();
         let answer = document.getElementById("correctAnswer").value.trim();
@@ -456,7 +411,7 @@
         }
     };
 
-    // ============ السؤال ============
+    // ============ السؤال (البحث الذكي) ============
     window.ask = function() {
         let question = document.getElementById("userQuestion").value.trim();
 
@@ -472,7 +427,7 @@
 
         const answerDiv = document.getElementById("answer");
 
-        // دعم العمليات الحسابية المباشرة
+        // 1. العمليات الحسابية المباشرة
         let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
         if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
             try {
@@ -487,21 +442,28 @@
             return;
         }
 
+        // 2. البحث عن أفضل تطابق
         let best = null;
         let bestScore = 0;
 
         for (let item of memory) {
-            let score = similarity(question, item.question);
+            const score = questionSimilarity(question, item.question);
             if (score > bestScore) {
                 bestScore = score;
                 best = item;
             }
         }
 
-        if (best && bestScore >= 0.75) {
+        // 3. شرط القبول: 70% أو أكتر
+        if (best && bestScore >= 0.70) {
             answerDiv.innerText = "🤖 " + best.answer;
         } else {
             answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
+        }
+
+        // (اختياري للتطوير) عرض النسبة في الكونسول
+        if (best) {
+            console.log(`أفضل تطابق: "${best.question}" بنسبة ${(bestScore * 100).toFixed(1)}%`);
         }
     };
 
