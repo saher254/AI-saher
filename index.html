@@ -4,565 +4,676 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI ساهر</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
-
     <style>
-        * { font-family: 'Tajawal', Arial, sans-serif; box-sizing: border-box; }
+        * { font-family: 'Tajawal', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            margin: 0; padding: 20px; min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .box {
-            width: 100%; max-width: 750px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 35px 30px;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        h1 {
-            text-align: center; color: #1a1a2e;
-            margin-bottom: 5px; font-weight: 700; font-size: 2.2rem;
-        }
-
-        .subtitle {
-            text-align: center; color: #666;
-            margin-top: 0; margin-bottom: 25px; font-size: 0.95rem;
-        }
-
-        .subtitle span {
-            background: #e0e7ff; padding: 4px 12px;
-            border-radius: 20px; font-weight: 500; color: #4338ca;
-        }
-
-        h3 {
-            color: #333; margin-top: 25px; margin-bottom: 10px;
-            font-weight: 500; display: flex; align-items: center; gap: 8px;
-        }
-
-        h3 i { font-style: normal; font-size: 1.2rem; }
-
-        textarea, input {
-            width: 100%; box-sizing: border-box;
-            padding: 14px 16px; margin: 8px 0;
-            border: 2px solid #e5e7eb; border-radius: 14px;
-            font-size: 16px; background: #f9fafb;
-            transition: all 0.2s;
-            font-family: 'Tajawal', Arial, sans-serif;
-        }
-
-        textarea:focus, input:focus {
-            outline: none; border-color: #6366f1; background: white;
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-        }
-
-        textarea { resize: vertical; min-height: 80px; }
-
-        button {
-            width: 100%; padding: 15px; margin: 8px 0;
-            border: none; border-radius: 14px;
-            font-size: 17px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            font-family: 'Tajawal', Arial, sans-serif;
-        }
-
-        button:active { transform: scale(0.98); }
-
-        .learn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        /* الهيدر */
+        .header {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        .learn:hover { box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6); }
-
-        .ask {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+        .header .brand {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 1.3rem; font-weight: 700;
         }
-        .ask:hover { box-shadow: 0 8px 25px rgba(17, 153, 142, 0.6); }
-
-        .save-btn {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        .header .brand-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, #a78bfa, #ec4899);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(167,139,250,0.4);
         }
-        .save-btn:hover { box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6); }
-
-        #answer {
-            margin-top: 20px; padding: 20px;
-            background: #f3f4f6; border-radius: 16px;
-            min-height: 50px; font-size: 1.05rem; line-height: 1.7;
-            color: #1f2937; border-right: 5px solid #6366f1;
-            transition: all 0.3s;
-            white-space: pre-wrap; word-wrap: break-word;
+        .header .online {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.85rem;
+            background: rgba(34,197,94,0.2);
+            color: #4ade80;
+            padding: 6px 14px; border-radius: 20px;
+            border: 1px solid rgba(74,222,128,0.3);
         }
-
-        .status-dot {
-            display: inline-block; width: 8px; height: 8px;
-            border-radius: 50%; background: #10b981;
-            margin-left: 6px; animation: pulse 2s infinite;
+        .header .online .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #4ade80;
+            animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.4; }
-            100% { opacity: 1; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
         }
 
-        .modal-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            justify-content: center; align-items: center; padding: 20px;
+        /* منطقة الدردشة */
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            scroll-behavior: smooth;
         }
 
-        .modal-overlay.show { display: flex; }
+        .msg {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+            animation: slideIn 0.35s ease;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .msg.bot { align-self: flex-start; }
 
+        .msg-avatar {
+            width: 42px; height: 42px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .msg.user .msg-avatar {
+            background: linear-gradient(135deg, #f472b6, #ec4899);
+        }
+        .msg.bot .msg-avatar {
+            background: linear-gradient(135deg, #a78bfa, #8b5cf6);
+        }
+
+        .msg-bubble {
+            padding: 14px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .msg.user .msg-bubble {
+            background: linear-gradient(135deg, #ec4899, #db2777);
+            color: white;
+            border-bottom-right-radius: 6px;
+        }
+        .msg.bot .msg-bubble {
+            background: rgba(255,255,255,0.95);
+            color: #1f2937;
+            border-bottom-left-radius: 6px;
+        }
+
+        /* الترحيب */
+        .welcome {
+            text-align: center;
+            margin: auto;
+            padding: 20px;
+            max-width: 500px;
+        }
+        .welcome-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        .welcome h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .welcome p {
+            color: rgba(255,255,255,0.75);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        .welcome .examples {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .example-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 14px 20px;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: right;
+            font-size: 0.92rem;
+            font-family: 'Tajawal';
+            transition: all 0.25s;
+            backdrop-filter: blur(10px);
+        }
+        .example-btn:hover {
+            background: rgba(255,255,255,0.18);
+            transform: translateX(-5px);
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        /* منطقة الإدخال */
+        .input-area {
+            padding: 16px 20px 20px;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .input-wrap {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            max-width: 900px;
+            margin: auto;
+        }
+        .input-field {
+            flex: 1;
+            padding: 16px 22px;
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 28px;
+            font-size: 1rem;
+            font-family: 'Tajawal';
+            background: rgba(255,255,255,0.1);
+            color: white;
+            transition: all 0.25s;
+            outline: none;
+        }
+        .input-field::placeholder { color: rgba(255,255,255,0.5); }
+        .input-field:focus {
+            background: rgba(255,255,255,0.18);
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 4px rgba(167,139,250,0.2);
+        }
+        .action-btn {
+            width: 54px; height: 54px;
+            border-radius: 18px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+        .send-btn {
+            background: linear-gradient(135deg, #a78bfa, #ec4899);
+            color: white;
+            box-shadow: 0 6px 20px rgba(167,139,250,0.5);
+        }
+        .send-btn:hover { transform: scale(1.08); box-shadow: 0 8px 25px rgba(167,139,250,0.7); }
+        .send-btn:active { transform: scale(0.95); }
+        .add-btn {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .add-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* المودال */
         .modal {
-            background: white; padding: 30px;
-            border-radius: 24px; width: 100%; max-width: 550px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
-            animation: modalIn 0.3s ease;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15,23,42,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
+        .modal.show { display: flex; }
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 520px;
+            animation: popIn 0.3s ease;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-box h2 {
+            color: #1e1b4b;
+            text-align: center;
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+        }
+        .modal-box .sub {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .modal-box .sub strong { color: #f59e0b; }
+        .modal-box input, .modal-box textarea {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 6px 0;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: 'Tajawal';
+            background: #f9fafb;
+            transition: all 0.2s;
+        }
+        .modal-box input:focus, .modal-box textarea:focus {
+            outline: none;
+            border-color: #a78bfa;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+        }
+        .modal-box textarea { min-height: 100px; resize: vertical; line-height: 1.7; }
+        .modal-box button {
+            width: 100%;
+            padding: 14px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Tajawal';
+            transition: all 0.2s;
+        }
+        .modal-box .save-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+        }
+        .modal-box .save-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(16,185,129,0.6); }
+        .modal-box .cancel-btn {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        .modal-box .cancel-btn:hover { background: #e5e7eb; }
 
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(-30px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        /* مؤشر الكتابة */
+        .typing {
+            display: flex; gap: 5px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            border-bottom-left-radius: 6px;
+            width: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
-
-        .modal h2 {
-            text-align: center; color: #1a1a2e;
-            margin-top: 0; margin-bottom: 5px;
+        .typing span {
+            width: 9px; height: 9px;
+            background: #a78bfa;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
         }
-
-        .modal .modal-subtitle {
-            text-align: center; color: #666;
-            font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;
+        .typing span:nth-child(2) { animation-delay: 0.2s; }
+        .typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
         }
-
-        .close-modal {
-            background: #f3f4f6; color: #374151; margin-top: 10px;
-        }
-        .close-modal:hover { background: #e5e7eb; }
 
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #a5b4fc; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
+
+        @media (max-width: 600px) {
+            .msg { max-width: 92%; }
+            .welcome h2 { font-size: 1.4rem; }
+            .header { padding: 12px 16px; }
+            .header .brand { font-size: 1.1rem; }
+        }
     </style>
 </head>
-
 <body>
 
-<div class="box">
-
-    <h1>🤖 AI ساهر</h1>
-    <p class="subtitle">قاعدة معرفة مشتركة <span>مباشرة من السحابة <span class="status-dot"></span></span></p>
-
-    <h3><i>💬</i> اسأل النموذج</h3>
-
-    <input id="userQuestion" placeholder="اكتب سؤالك هنا">
-
-    <button class="ask" onclick="ask()">
-        🤖 اسأل AI ساهر
-    </button>
-
-    <div id="answer">
-        مرحباً! أنا ساهر. اسألني أي شيء أو علّمني معلومة جديدة.
+    <div class="header">
+        <div class="brand">
+            <div class="brand-icon">🤖</div>
+            AI ساهر
+        </div>
+        <div class="online">
+            <span class="dot"></span> متصل
+        </div>
     </div>
 
-    <button class="learn" onclick="openModal()">
-        🧠 علّم النموذج
-    </button>
-
-</div>
-
-<div class="modal-overlay" id="learnModal">
-    <div class="modal">
-        <h2>🧠 علّم النموذج</h2>
-        <p class="modal-subtitle">أضف سؤالاً وإجابته، وستكون متاحة للجميع فوراً.</p>
-
-        <input id="question" placeholder="اكتب السؤال الذي تريد تعليمي إياه">
-        <textarea id="correctAnswer" placeholder="اكتب الإجابة الصحيحة"></textarea>
-
-        <button class="save-btn" id="saveLearnBtn" onclick="learn()">
-            💾 حفظ المعلومة في السحابة
-        </button>
-
-        <button class="close-modal" onclick="closeModal()">
-            ✖️ إغلاق
-        </button>
+    <div class="chat-area" id="chatArea">
+        <div class="welcome" id="welcome">
+            <div class="welcome-icon">✨</div>
+            <h2>أهلاً بك في AI ساهر</h2>
+            <p>مساعدك الذكي اللي بيتعلم منك ومن كل المستخدمين. اسألني أي حاجة، ولو معرفتهاش هطلب منك تعلمني.</p>
+            <div class="examples">
+                <button class="example-btn" onclick="fillInput('ما هي عاصمة مصر')">💡 ما هي عاصمة مصر</button>
+                <button class="example-btn" onclick="fillInput('ازيك')">💡 ازيك</button>
+                <button class="example-btn" onclick="fillInput('ما هي عاصمة البرازيل والسعودية')">💡 ما هي عاصمة البرازيل والسعودية</button>
+            </div>
+        </div>
     </div>
-</div>
+
+    <div class="input-area">
+        <div class="input-wrap">
+            <button class="action-btn add-btn" onclick="openModal()" title="إضافة سؤال">➕</button>
+            <input class="input-field" id="userInput" placeholder="اكتب سؤالك هنا..." onkeydown="if(event.key==='Enter') ask()">
+            <button class="action-btn send-btn" onclick="ask()" title="إرسال">➤</button>
+        </div>
+    </div>
+
+    <div class="modal" id="addModal">
+        <div class="modal-box">
+            <h2>🧠 إضافة سؤال جديد</h2>
+            <p class="sub">السؤال هيروح للإدارة للمراجعة، <strong>مش هيتنشر فورًا</strong>.</p>
+            <input id="newQ" placeholder="اكتب السؤال هنا...">
+            <textarea id="newA" placeholder="اكتب الإجابة الصحيحة هنا..."></textarea>
+            <button class="save-btn" id="saveBtn" onclick="submitSuggestion()">📤 إرسال للإدارة</button>
+            <button class="cancel-btn" onclick="closeModal()">✖️ إلغاء</button>
+        </div>
+    </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAUmHcm0d0ErUph8l132llavVcUfwHWfic",
-        authDomain: "gaming-platform-5ef6c.firebaseapp.com",
-        projectId: "gaming-platform-5ef6c",
-        storageBucket: "gaming-platform-5ef6c.firebasestorage.app",
-        messagingSenderId: "332262507211",
-        appId: "1:332262507211:web:dd51b094b7d3e4ab68914e",
-        measurementId: "G-GVYDLMTY22"
-    };
+const firebaseConfig = {
+    apiKey: "AIzaSyAUmHcm0d0ErUph8l132llavVcUfwHWfic",
+    authDomain: "gaming-platform-5ef6c.firebaseapp.com",
+    projectId: "gaming-platform-5ef6c",
+    storageBucket: "gaming-platform-5ef6c.firebasestorage.app",
+    messagingSenderId: "332262507211",
+    appId: "1:332262507211:web:dd51b094b7d3e4ab68914e"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const knowledgeCollection = collection(db, "knowledge");
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const knowledgeCol = collection(db, "knowledge");
+const unansweredCol = collection(db, "unanswered");
+const pendingCol = collection(db, "pending");
 
-    let memory = [];
-    let isLoading = true;
+let memory = [];
+let loading = true;
 
-    // ============ كلمات الحشو اللي تتشال قبل المقارنة ============
-    const STOP_WORDS = [
-        "ما", "هي", "هو", "هم", "في", "من", "عن", "على", "الى", "إلى",
-        "ايه", "إيه", "ال", "هل", "كان", "كانت", "يكون", "تكون",
-        "يا", "بس", "دي", "ده", "دا", "اللي", "التي", "الذي"
-    ];
+// ===== أدوات =====
+function normalize(t) {
+    return t.toLowerCase().trim()
+        .replace(/[؟?!.,،؛:]/g, "")
+        .replace(/[إأآا]/g, "ا")
+        .replace(/ى/g, "ي")
+        .replace(/ة/g, "ه")
+        .replace(/\s+/g, " ").trim();
+}
 
-    // ============ تنظيف النص وتقسيمه لكلمات ============
-    function normalizeText(text) {
-        return text
-            .toLowerCase()
-            .trim()
-            .replace(/[؟?!.,،؛:]/g, "")
-            .replace(/[إأآا]/g, "ا")   // توحيد الألف
-            .replace(/ى/g, "ي")        // توحيد الياء
-            .replace(/ة/g, "ه")        // توحيد التاء المربوطة
-            .replace(/\s+/g, " ")
-            .trim();
+const STOP = ["ما","هي","هو","هم","في","من","عن","على","الى","إلى","ايه","إيه","ال","هل","كان","كانت","يا","بس","دي","ده","دا","اللي"];
+
+function getWords(t) {
+    return normalize(t).split(" ").filter(w => w && !STOP.includes(w));
+}
+
+function wordSim(a, b) {
+    if (a === b) return 1;
+    if (a.length < 2 || b.length < 2) return 0;
+    if (a.startsWith(b) || b.startsWith(a)) return 0.9;
+    let common = 0;
+    const bChars = b.split("");
+    for (let c of a) {
+        const i = bChars.indexOf(c);
+        if (i !== -1) { common++; bChars.splice(i, 1); }
     }
+    return (2 * common) / (a.length + b.length);
+}
 
-    function getWords(text) {
-        const normalized = normalizeText(text);
-        return normalized
-            .split(" ")
-            .filter(w => w.length > 0 && !STOP_WORDS.includes(w));
+function similarity(q1, q2) {
+    if (normalize(q1) === normalize(q2)) return 1;
+    const w1 = getWords(q1), w2 = getWords(q2);
+    if (!w1.length || !w2.length) return 0;
+    let m1 = 0;
+    for (let a of w1) {
+        let best = 0;
+        for (let b of w2) best = Math.max(best, wordSim(a, b));
+        m1 += best;
     }
-
-    // ============ مطابقة تامة ============
-    function exactMatch(q1, q2) {
-        return normalizeText(q1) === normalizeText(q2);
+    const cov1 = m1 / w1.length;
+    let m2 = 0;
+    for (let b of w2) {
+        let best = 0;
+        for (let a of w1) best = Math.max(best, wordSim(b, a));
+        m2 += best;
     }
+    const cov2 = m2 / w2.length;
+    return (cov1 + cov2) / 2;
+}
 
-    // ============ حساب التشابه بين كلمتين (Levenshtein مبسط) ============
-    function wordSimilarity(w1, w2) {
-        if (w1 === w2) return 1;
-        if (w1.length < 2 || w2.length < 2) return 0;
-
-        // لو واحدة بتبدأ بالتانية أو العكس
-        if (w1.startsWith(w2) || w2.startsWith(w1)) return 0.9;
-
-        // حساب الحروف المشتركة
-        let common = 0;
-        const w2Chars = w2.split("");
-        for (let ch of w1) {
-            const idx = w2Chars.indexOf(ch);
-            if (idx !== -1) {
-                common++;
-                w2Chars.splice(idx, 1);
-            }
-        }
-        return (2 * common) / (w1.length + w2.length);
+function findBest(text) {
+    let best = null, score = 0;
+    for (let item of memory) {
+        const s = similarity(text, item.question);
+        if (s > score) { score = s; best = item; }
     }
+    return best ? { ...best, score } : null;
+}
 
-    // ============ حساب نسبة تطابق السؤال بكلمة بكلمة ============
-    function questionSimilarity(userQ, storedQ) {
-        // 1. مطابقة تامة
-        if (exactMatch(userQ, storedQ)) return 1.0;
-
-        const userWords = getWords(userQ);
-        const storedWords = getWords(storedQ);
-
-        if (userWords.length === 0 || storedWords.length === 0) return 0;
-
-        // 2. نحسب لكل كلمة في سؤال المستخدم: هل فيه كلمة مطابقة في السؤال المخزن؟
-        let matchedWeight = 0;
-        let totalWeight = userWords.length;
-
-        for (let uw of userWords) {
-            let bestWordScore = 0;
-            for (let sw of storedWords) {
-                const score = wordSimilarity(uw, sw);
-                if (score > bestWordScore) bestWordScore = score;
-            }
-            matchedWeight += bestWordScore;
-        }
-
-        // 3. نسبة التطابق من جهة المستخدم
-        const userCoverage = matchedWeight / totalWeight;
-
-        // 4. نسبة التطابق من جهة السؤال المخزن (عشان نمنع الردود اللي فيها كلمات زيادة كتير)
-        let storedMatchedWeight = 0;
-        for (let sw of storedWords) {
-            let bestWordScore = 0;
-            for (let uw of userWords) {
-                const score = wordSimilarity(sw, uw);
-                if (score > bestWordScore) bestWordScore = score;
-            }
-            storedMatchedWeight += bestWordScore;
-        }
-        const storedCoverage = storedMatchedWeight / storedWords.length;
-
-        // 5. النسبة النهائية = متوسط الاتنين (لازم الاتنين يكونوا كويسين)
-        return (userCoverage + storedCoverage) / 2;
+function splitQuestions(q) {
+    let parts = [q.replace(/\s+/g, " ").trim()];
+    const seps = [/ و(?=\S)/g, / أو(?=\S)/g, / ثم(?=\S)/g, /[،,]/g];
+    for (let sep of seps) {
+        const np = [];
+        for (let p of parts) np.push(...p.split(sep).map(s => s.trim()).filter(s => s.length > 0));
+        parts = np;
     }
+    parts = parts.filter(p => p.length >= 2);
+    if (parts.length <= 1 || parts.length > 5) return [q];
+    const first = parts[0].split(" ");
+    const prefix = first.length >= 2 ? first.slice(0, -1).join(" ") : "";
+    return parts.map((p, i) => i === 0 ? p : (prefix && !p.startsWith(prefix) ? prefix + " " + p : p));
+}
 
-    // ============ تحميل البيانات ============
-    async function loadKnowledge() {
-        try {
-            isLoading = true;
-            const querySnapshot = await getDocs(knowledgeCollection);
-            const newMemory = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                newMemory.push({
-                    id: doc.id,
-                    question: data.question,
-                    answer: data.answer
-                });
+// ===== تحميل البيانات =====
+async function loadKnowledge() {
+    try {
+        const snap = await getDocs(knowledgeCol);
+        memory = [];
+        snap.forEach(d => {
+            const data = d.data();
+            memory.push({ id: d.id, question: data.question || "", answer: data.answer || "" });
+        });
+        loading = false;
+        console.log(`✅ تم تحميل ${memory.length} معلومة`);
+    } catch (e) {
+        console.error("❌ خطأ:", e);
+        loading = false;
+    }
+}
+
+// ===== تسجيل سؤال بدون إجابة =====
+async function logUnanswered(text) {
+    try {
+        const q = query(unansweredCol, where("question", "==", text));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+            const d = snap.docs[0];
+            await updateDoc(doc(db, "unanswered", d.id), {
+                count: (d.data().count || 1) + 1,
+                lastAsked: new Date()
             });
-            memory = newMemory;
-            isLoading = false;
-            console.log(`تم تحميل ${memory.length} معلومة من السحابة.`);
-        } catch (error) {
-            console.error("خطأ في تحميل البيانات: ", error);
-            isLoading = false;
+        } else {
+            await addDoc(unansweredCol, {
+                question: text, count: 1,
+                createdAt: new Date(), lastAsked: new Date()
+            });
         }
+        console.log("✅ تم تسجيل السؤال بدون إجابة");
+    } catch (e) {
+        console.error("❌ خطأ في التسجيل:", e);
     }
+}
 
-    // ============ فتح/إغلاق المودال ============
-    window.openModal = function() {
-        document.getElementById("learnModal").classList.add("show");
-        setTimeout(() => document.getElementById("question").focus(), 100);
-    };
+// ===== واجهة =====
+window.fillInput = function(text) {
+    document.getElementById("userInput").value = text;
+    document.getElementById("userInput").focus();
+};
 
-    window.closeModal = function() {
-        document.getElementById("learnModal").classList.remove("show");
-    };
+window.openModal = function() {
+    document.getElementById("addModal").classList.add("show");
+    setTimeout(() => document.getElementById("newQ").focus(), 100);
+};
 
-    document.getElementById("learnModal").addEventListener("click", function(e) {
-        if (e.target === this) closeModal();
-    });
+window.closeModal = function() {
+    document.getElementById("addModal").classList.remove("show");
+    document.getElementById("newQ").value = "";
+    document.getElementById("newA").value = "";
+};
 
-    document.addEventListener("keydown", function(e) {
-        if (e.key === "Escape") closeModal();
-    });
+document.getElementById("addModal").addEventListener("click", e => {
+    if (e.target.id === "addModal") closeModal();
+});
 
-    // ============ تعليم النموذج ============
-    window.learn = async function() {
-        let question = document.getElementById("question").value.trim();
-        let answer = document.getElementById("correctAnswer").value.trim();
-        const btn = document.getElementById("saveLearnBtn");
+function esc(t) {
+    const d = document.createElement("div");
+    d.textContent = t;
+    return d.innerHTML;
+}
 
-        if (question === "" || answer === "") {
-            alert("اكتب السؤال والإجابة أولًا");
-            return;
-        }
+function addMessage(text, isUser) {
+    const welcome = document.getElementById("welcome");
+    if (welcome) welcome.remove();
+    const chat = document.getElementById("chatArea");
+    const div = document.createElement("div");
+    div.className = "msg " + (isUser ? "user" : "bot");
+    div.innerHTML = `
+        <div class="msg-avatar">${isUser ? "👤" : "🤖"}</div>
+        <div class="msg-bubble">${esc(text)}</div>
+    `;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
 
-        if (isLoading) {
-            alert("البيانات لا تزال قيد التحميل، يرجى الانتظار لحظة.");
-            return;
-        }
+function showTyping() {
+    const chat = document.getElementById("chatArea");
+    const div = document.createElement("div");
+    div.className = "msg bot";
+    div.id = "typingMsg";
+    div.innerHTML = `<div class="msg-avatar">🤖</div><div class="typing"><span></span><span></span><span></span></div>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
 
-        btn.disabled = true;
-        btn.innerHTML = '⏳ جاري الحفظ...';
+function hideTyping() {
+    const t = document.getElementById("typingMsg");
+    if (t) t.remove();
+}
 
-        try {
-            const docRef = await addDoc(knowledgeCollection, {
-                question: question,
-                answer: answer,
-                timestamp: new Date()
-            });
+window.submitSuggestion = async function() {
+    const q = document.getElementById("newQ").value.trim();
+    const a = document.getElementById("newA").value.trim();
+    const btn = document.getElementById("saveBtn");
 
-            memory.push({
-                id: docRef.id,
-                question: question,
-                answer: answer
-            });
+    if (!q || !a) { alert("اكتب السؤال والإجابة أولاً"); return; }
 
-            document.getElementById("question").value = "";
-            document.getElementById("correctAnswer").value = "";
+    btn.disabled = true;
+    btn.textContent = "⏳ جاري الإرسال...";
 
-            alert("🧠 تم تعليم النموذج وحفظ المعلومة في السحابة بنجاح!");
-            closeModal();
+    try {
+        await addDoc(pendingCol, {
+            question: q, answer: a,
+            createdAt: new Date(), status: "pending"
+        });
+                alert("✅ تم إرسال السؤال للإدارة للمراجعة!");
+        closeModal();
+    } catch (e) {
+        console.error("❌ خطأ:", e);
+        alert("❌ حدث خطأ: " + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = "📤 إرسال للإدارة";
+    }
+};
 
-        } catch (error) {
-            console.error("خطأ في الحفظ: ", error);
-            alert("حدث خطأ أثناء الحفظ. تأكد من اتصالك بالإنترنت وإعدادات Firestore.");
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '💾 حفظ المعلومة في السحابة';
-        }
-    };
+window.ask = async function() {
+    const input = document.getElementById("userInput");
+    const question = input.value.trim();
+    if (!question) return;
 
-    // ============ السؤال (البحث الذكي) ============
-    // ============ السؤال (البحث الذكي + دعم أسئلة متعددة) ============
-window.ask = function() {
-    let question = document.getElementById("userQuestion").value.trim();
+    input.value = "";
+    addMessage(question, true);
 
-    if (question === "") {
-        alert("اكتب سؤالًا أولًا");
+    if (loading) {
+        addMessage("⏳ جاري تحميل قاعدة المعرفة...", false);
         return;
     }
 
-    if (isLoading) {
-        document.getElementById("answer").innerText = "🤖 جاري تحميل قاعدة المعرفة، يرجى الانتظار...";
-        return;
-    }
-
-    const answerDiv = document.getElementById("answer");
-
-    // 1. العمليات الحسابية المباشرة
-    let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
-    if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
+    // العمليات الحسابية
+    const mathClean = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
+    if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(mathClean)) {
         try {
-            let result = eval(cleanMath);
-            answerDiv.innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
+            addMessage("🤖 الناتج: " + eval(mathClean), false);
             return;
         } catch (e) {}
     }
 
     if (memory.length === 0) {
-        answerDiv.innerText = "🤖 قاعدة البيانات فارغة حالياً. قم بتعليمي أول معلومة!";
+        addMessage("🤖 قاعدة البيانات فاضية. علّمني أول معلومة!", false);
         return;
     }
 
-    // 2. تقسيم السؤال لأجزاء لو فيه أسئلة متعددة
-    const parts = splitMultipleQuestions(question);
+    showTyping();
+    await new Promise(r => setTimeout(r, 400));
+    hideTyping();
 
-    // لو جزء واحد → البحث العادي
+    const parts = splitQuestions(question);
+
+    // سؤال واحد
     if (parts.length === 1) {
-        const result = findBestMatch(question);
+        const result = findBest(question);
         if (result && result.score >= 0.70) {
-            answerDiv.innerText = "🤖 " + result.answer;
+            addMessage("🤖 " + result.answer, false);
         } else {
-            answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
-        }
-        if (result) {
-            console.log(`أفضل تطابق: "${result.question}" بنسبة ${(result.score * 100).toFixed(1)}%`);
+            addMessage("🤖 برمجني على المعلومة دي الأول 😅", false);
+            logUnanswered(question);
         }
         return;
     }
 
-    // 3. لو أجزاء متعددة → ندوّر على كل جزء ونلم النتايج
-    const results = [];
-    for (let part of parts) {
-        const result = findBestMatch(part);
-        if (result && result.score >= 0.70) {
-            results.push({ part: part, answer: result.answer, found: true });
-        } else {
-            results.push({ part: part, answer: null, found: false });
-        }
-    }
+    // أسئلة متعددة
+    const results = parts.map(p => {
+        const r = findBest(p);
+        return { part: p, answer: r && r.score >= 0.70 ? r.answer : null };
+    });
 
-    // 4. نبني الرد
-    const foundResults = results.filter(r => r.found);
-    const notFoundResults = results.filter(r => !r.found);
+    const found = results.filter(r => r.answer);
+    const notFound = results.filter(r => !r.answer);
 
-    if (foundResults.length === 0) {
-        answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
-    } else if (notFoundResults.length === 0) {
-        // لقى كل حاجة → يجمع الإجابات
-        let response = "🤖 إليك الإجابات:\n\n";
-        foundResults.forEach((r, i) => {
-            response += `${i + 1}. ${r.answer}\n`;
-        });
-        answerDiv.innerText = response.trim();
+    if (found.length === 0) {
+        addMessage("🤖 برمجني على المعلومات دي الأول 😅", false);
+        logUnanswered(question);
+    } else if (notFound.length === 0) {
+        let msg = "🤖 إليك الإجابات:\n\n";
+        found.forEach((r, i) => msg += `${i + 1}. ${r.answer}\n`);
+        addMessage(msg.trim(), false);
     } else {
-        // لقى بعض الحاجات بس
-        let response = "🤖 إليك ما أعرفه:\n\n";
-        foundResults.forEach((r, i) => {
-            response += `${i + 1}. ${r.answer}\n`;
-        });
-        response += "\n❓ أما عن: ";
-        response += notFoundResults.map(r => `"${r.part}"`).join(" و ");
-        response += " — فبرمجني عليه أولاً 😅";
-        answerDiv.innerText = response;
+        let msg = "🤖 إليك ما أعرفه:\n\n";
+        found.forEach((r, i) => msg += `${i + 1}. ${r.answer}\n`);
+        msg += "\n❓ أما عن: " + notFound.map(r => `"${r.part}"`).join(" و ") + " — فبرمجني عليه أولاً 😅";
+        addMessage(msg, false);
+        notFound.forEach(r => logUnanswered(r.part));
     }
 };
 
-// ============ تقسيم السؤال لأجزاء متعددة (نسخة ذكية) ============
-function splitMultipleQuestions(question) {
-    let q = question.replace(/\s+/g, " ").trim();
-
-    // نبحث عن فواصل العطف
-    const separators = [
-        / و(?=\S)/g,
-        / أو(?=\S)/g,
-        / ثم(?=\S)/g,
-        / بعدين(?=\S)/g,
-        /[،,]/g,
-    ];
-
-    // نقسم مبدئيًا
-    let parts = [q];
-    for (let sep of separators) {
-        const newParts = [];
-        for (let part of parts) {
-            const split = part.split(sep).map(s => s.trim()).filter(s => s.length > 0);
-            newParts.push(...split);
-        }
-        parts = newParts;
-    }
-
-    parts = parts.filter(p => p.length >= 2);
-
-    if (parts.length <= 1) return [question];
-    if (parts.length > 5) return [question];
-
-    // ✨ الذكاء: ناخد البادئة المشتركة من الجزء الأول ونطبقها على الباقي
-    const firstPart = parts[0];
-    const firstWords = firstPart.split(" ");
-
-    let prefix = "";
-    if (firstWords.length >= 2) {
-        prefix = firstWords.slice(0, -1).join(" ");
-    }
-
-    const rebuilt = parts.map((part, idx) => {
-        if (idx === 0) return part;
-        if (prefix && !part.startsWith(prefix)) {
-            return prefix + " " + part;
-        }
-        return part;
-    });
-
-    return rebuilt;
-}
-
-// ============ البحث عن أفضل تطابق (دالة مساعدة) ============
-function findBestMatch(questionText) {
-    let best = null;
-    let bestScore = 0;
-
-    for (let item of memory) {
-        const score = questionSimilarity(questionText, item.question);
-        if (score > bestScore) {
-            bestScore = score;
-            best = item;
-        }
-    }
-
-    return best ? { ...best, score: bestScore } : null;
-}
-
-// ============ تشغيل ============
 loadKnowledge();
 </script>
 
