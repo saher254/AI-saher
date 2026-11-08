@@ -412,63 +412,158 @@
     };
 
     // ============ السؤال (البحث الذكي) ============
-    window.ask = function() {
-        let question = document.getElementById("userQuestion").value.trim();
+    // ============ السؤال (البحث الذكي + دعم أسئلة متعددة) ============
+window.ask = function() {
+    let question = document.getElementById("userQuestion").value.trim();
 
-        if (question === "") {
-            alert("اكتب سؤالًا أولًا");
+    if (question === "") {
+        alert("اكتب سؤالًا أولًا");
+        return;
+    }
+
+    if (isLoading) {
+        document.getElementById("answer").innerText = "🤖 جاري تحميل قاعدة المعرفة، يرجى الانتظار...";
+        return;
+    }
+
+    const answerDiv = document.getElementById("answer");
+
+    // 1. العمليات الحسابية المباشرة
+    let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
+    if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
+        try {
+            let result = eval(cleanMath);
+            answerDiv.innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
             return;
-        }
+        } catch (e) {}
+    }
 
-        if (isLoading) {
-            document.getElementById("answer").innerText = "🤖 جاري تحميل قاعدة المعرفة، يرجى الانتظار...";
-            return;
-        }
+    if (memory.length === 0) {
+        answerDiv.innerText = "🤖 قاعدة البيانات فارغة حالياً. قم بتعليمي أول معلومة!";
+        return;
+    }
 
-        const answerDiv = document.getElementById("answer");
+    // 2. تقسيم السؤال لأجزاء لو فيه أسئلة متعددة
+    const parts = splitMultipleQuestions(question);
 
-        // 1. العمليات الحسابية المباشرة
-        let cleanMath = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
-        if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(cleanMath)) {
-            try {
-                let result = eval(cleanMath);
-                answerDiv.innerText = `🤖 ناتج العملية الحسابية هو: ${result}`;
-                return;
-            } catch (e) {}
-        }
-
-        if (memory.length === 0) {
-            answerDiv.innerText = "🤖 قاعدة البيانات فارغة حالياً. قم بتعليمي أول معلومة!";
-            return;
-        }
-
-        // 2. البحث عن أفضل تطابق
-        let best = null;
-        let bestScore = 0;
-
-        for (let item of memory) {
-            const score = questionSimilarity(question, item.question);
-            if (score > bestScore) {
-                bestScore = score;
-                best = item;
-            }
-        }
-
-        // 3. شرط القبول: 70% أو أكتر
-        if (best && bestScore >= 0.70) {
-            answerDiv.innerText = "🤖 " + best.answer;
+    // لو جزء واحد → البحث العادي
+    if (parts.length === 1) {
+        const result = findBestMatch(question);
+        if (result && result.score >= 0.70) {
+            answerDiv.innerText = "🤖 " + result.answer;
         } else {
             answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
         }
-
-        // (اختياري للتطوير) عرض النسبة في الكونسول
-        if (best) {
-            console.log(`أفضل تطابق: "${best.question}" بنسبة ${(bestScore * 100).toFixed(1)}%`);
+        if (result) {
+            console.log(`أفضل تطابق: "${result.question}" بنسبة ${(result.score * 100).toFixed(1)}%`);
         }
-    };
+        return;
+    }
 
-    // ============ تشغيل ============
-    loadKnowledge();
+    // 3. لو أجزاء متعددة → ندوّر على كل جزء ونلم النتايج
+    const results = [];
+    for (let part of parts) {
+        const result = findBestMatch(part);
+        if (result && result.score >= 0.70) {
+            results.push({ part: part, answer: result.answer, found: true });
+        } else {
+            results.push({ part: part, answer: null, found: false });
+        }
+    }
+
+    // 4. نبني الرد
+    const foundResults = results.filter(r => r.found);
+    const notFoundResults = results.filter(r => !r.found);
+
+    if (foundResults.length === 0) {
+        answerDiv.innerText = "🤖 برمجني على هذه المعلومات أولاً لأن ساهر لم يخبرني بهذا 😅";
+    } else if (notFoundResults.length === 0) {
+        // لقى كل حاجة → يجمع الإجابات
+        let response = "🤖 إليك الإجابات:\n\n";
+        foundResults.forEach((r, i) => {
+            response += `${i + 1}. ${r.answer}\n`;
+        });
+        answerDiv.innerText = response.trim();
+    } else {
+        // لقى بعض الحاجات بس
+        let response = "🤖 إليك ما أعرفه:\n\n";
+        foundResults.forEach((r, i) => {
+            response += `${i + 1}. ${r.answer}\n`;
+        });
+        response += "\n❓ أما عن: ";
+        response += notFoundResults.map(r => `"${r.part}"`).join(" و ");
+        response += " — فبرمجني عليه أولاً 😅";
+        answerDiv.innerText = response;
+    }
+};
+
+// ============ تقسيم السؤال لأجزاء متعددة (نسخة ذكية) ============
+function splitMultipleQuestions(question) {
+    let q = question.replace(/\s+/g, " ").trim();
+
+    // نبحث عن فواصل العطف
+    const separators = [
+        / و(?=\S)/g,
+        / أو(?=\S)/g,
+        / ثم(?=\S)/g,
+        / بعدين(?=\S)/g,
+        /[،,]/g,
+    ];
+
+    // نقسم مبدئيًا
+    let parts = [q];
+    for (let sep of separators) {
+        const newParts = [];
+        for (let part of parts) {
+            const split = part.split(sep).map(s => s.trim()).filter(s => s.length > 0);
+            newParts.push(...split);
+        }
+        parts = newParts;
+    }
+
+    parts = parts.filter(p => p.length >= 2);
+
+    if (parts.length <= 1) return [question];
+    if (parts.length > 5) return [question];
+
+    // ✨ الذكاء: ناخد البادئة المشتركة من الجزء الأول ونطبقها على الباقي
+    const firstPart = parts[0];
+    const firstWords = firstPart.split(" ");
+
+    let prefix = "";
+    if (firstWords.length >= 2) {
+        prefix = firstWords.slice(0, -1).join(" ");
+    }
+
+    const rebuilt = parts.map((part, idx) => {
+        if (idx === 0) return part;
+        if (prefix && !part.startsWith(prefix)) {
+            return prefix + " " + part;
+        }
+        return part;
+    });
+
+    return rebuilt;
+}
+
+// ============ البحث عن أفضل تطابق (دالة مساعدة) ============
+function findBestMatch(questionText) {
+    let best = null;
+    let bestScore = 0;
+
+    for (let item of memory) {
+        const score = questionSimilarity(questionText, item.question);
+        if (score > bestScore) {
+            bestScore = score;
+            best = item;
+        }
+    }
+
+    return best ? { ...best, score: bestScore } : null;
+}
+
+// ============ تشغيل ============
+loadKnowledge();
 </script>
 
 </body>
