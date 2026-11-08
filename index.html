@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AI ساهر</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -14,6 +14,7 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh; /* لدعم شاشات الموبايل الحديثة */
             overflow: hidden;
         }
 
@@ -23,10 +24,13 @@
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding: 16px 24px;
+            padding-top: calc(16px + env(safe-area-inset-top, 0px));
             display: flex;
             align-items: center;
             justify-content: space-between;
             color: white;
+            position: relative;
+            z-index: 10;
         }
         .header .brand {
             display: flex; align-items: center; gap: 12px;
@@ -168,10 +172,12 @@
 
         /* منطقة الإدخال */
         .input-area {
-            padding: 16px 20px 20px;
+            padding: 16px 20px calc(20px + env(safe-area-inset-bottom, 20px));
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            z-index: 10;
         }
         .input-wrap {
             display: flex;
@@ -191,6 +197,7 @@
             color: white;
             transition: all 0.25s;
             outline: none;
+            min-width: 0; /* يمنع الخروج عن الإطار */
         }
         .input-field::placeholder { color: rgba(255,255,255,0.5); }
         .input-field:focus {
@@ -245,6 +252,8 @@
             max-width: 520px;
             animation: popIn 0.3s ease;
             box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes popIn {
             from { opacity: 0; transform: scale(0.9) translateY(-20px); }
@@ -334,11 +343,25 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.35); }
 
+        /* الموبايل والتابلت */
         @media (max-width: 600px) {
             .msg { max-width: 92%; }
             .welcome h2 { font-size: 1.4rem; }
-            .header { padding: 12px 16px; }
+            .welcome-icon { font-size: 4rem; }
+            .header { padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top, 0px)); }
             .header .brand { font-size: 1.1rem; }
+            .chat-area { padding: 16px 12px; }
+            .input-area { padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 12px)); }
+            .input-wrap { gap: 8px; }
+            .input-field { padding: 14px 18px; font-size: 0.95rem; }
+            .action-btn { width: 48px; height: 48px; font-size: 1.2rem; }
+            .msg-avatar { width: 36px; height: 36px; font-size: 1.1rem; }
+            .msg-bubble { padding: 12px 16px; font-size: 0.95rem; }
+        }
+
+        @media (min-width: 768px) {
+            .chat-area { padding: 28px 32px; }
+            .input-area { padding: 20px 32px calc(24px + env(safe-area-inset-bottom, 20px)); }
         }
     </style>
 </head>
@@ -482,7 +505,6 @@ function splitQuestions(q) {
     return parts.map((p, i) => i === 0 ? p : (prefix && !p.startsWith(prefix) ? prefix + " " + p : p));
 }
 
-// ===== تحميل البيانات =====
 async function loadKnowledge() {
     try {
         const snap = await getDocs(knowledgeCol);
@@ -499,7 +521,6 @@ async function loadKnowledge() {
     }
 }
 
-// ===== تسجيل سؤال بدون إجابة =====
 async function logUnanswered(text) {
     try {
         const q = query(unansweredCol, where("question", "==", text));
@@ -522,7 +543,6 @@ async function logUnanswered(text) {
     }
 }
 
-// ===== واجهة =====
 window.fillInput = function(text) {
     document.getElementById("userInput").value = text;
     document.getElementById("userInput").focus();
@@ -593,7 +613,7 @@ window.submitSuggestion = async function() {
             question: q, answer: a,
             createdAt: new Date(), status: "pending"
         });
-                alert("✅ تم إرسال السؤال للإدارة للمراجعة!");
+        alert("✅ تم إرسال السؤال للإدارة للمراجعة!");
         closeModal();
     } catch (e) {
         console.error("❌ خطأ:", e);
@@ -617,7 +637,6 @@ window.ask = async function() {
         return;
     }
 
-    // العمليات الحسابية
     const mathClean = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
     if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(mathClean)) {
         try {
@@ -637,7 +656,6 @@ window.ask = async function() {
 
     const parts = splitQuestions(question);
 
-    // سؤال واحد
     if (parts.length === 1) {
         const result = findBest(question);
         if (result && result.score >= 0.70) {
@@ -649,7 +667,6 @@ window.ask = async function() {
         return;
     }
 
-    // أسئلة متعددة
     const results = parts.map(p => {
         const r = findBest(p);
         return { part: p, answer: r && r.score >= 0.70 ? r.answer : null };
