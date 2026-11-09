@@ -130,6 +130,117 @@
             .chat-area { padding: 15px; gap: 15px; }
             .input-field { font-size: 16px; }
         }
+        /* ===== رسالة تثبيت التطبيق ===== */
+.install-banner {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(30, 41, 59, 0.95);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 15px 20px;
+    padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    z-index: 2000;
+    animation: slideUpBanner 0.4s ease;
+}
+
+.install-banner.show { display: block; }
+
+@keyframes slideUpBanner {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.install-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 800px;
+    margin: auto;
+}
+
+.install-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #8b5cf6, #ff6b9d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.install-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.install-title {
+    font-weight: 700;
+    font-size: 1rem;
+    color: white;
+}
+
+.install-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.install-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.install-btn {
+    background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    transition: 0.2s;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.install-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 18px rgba(139, 92, 246, 0.6);
+}
+
+.close-install-btn {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.close-install-btn:hover {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .install-content { flex-wrap: wrap; gap: 10px; }
+    .install-actions { width: 100%; justify-content: space-between; }
+    .install-btn { flex: 1; }
+}
     </style>
 </head>
 <body>
@@ -192,6 +303,24 @@
             </div>
         </div>
     </div>
+    <!-- ===== رسالة تثبيت التطبيق ===== -->
+<div id="installBanner" class="install-banner">
+    <div class="install-content">
+        <div class="install-icon">
+            <i class="fas fa-download"></i>
+        </div>
+        <div class="install-text">
+            <div class="install-title">تثبيت تطبيق ساهر AI</div>
+            <div class="install-desc">احصل على تجربة أسرع وأفضل!</div>
+        </div>
+        <div class="install-actions">
+            <button class="install-btn" onclick="installApp()">تثبيت</button>
+            <button class="close-install-btn" onclick="closeInstallBanner()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -512,39 +641,42 @@
             renderHistoryList();
         }
 
-        // ===== كود تثبيت التطبيق (PWA) =====
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            const installBtnHTML = `
-                <div class="msg bot" id="installMsg" style="cursor:pointer;" onclick="installApp()">
-                    <div class="msg-avatar"><i class="fas fa-download"></i></div>
-                    <div class="msg-bubble" style="color: var(--primary); font-weight: bold;">
-                        📲 اضغط هنا لتثبيت تطبيق ساهر AI على جهازك!
-                    </div>
-                </div>
-            `;
-            const chatArea = document.getElementById('chatArea');
-            if (chatArea && !document.getElementById('installMsg')) {
-                chatArea.insertAdjacentHTML('afterbegin', installBtnHTML);
-            }
-        });
+    // ===== رسالة تثبيت التطبيق =====
+let deferredPrompt;
 
-        window.installApp = async function() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('تم تثبيت التطبيق');
-                }
-                deferredPrompt = null;
-                const msg = document.getElementById('installMsg');
-                if (msg) msg.remove();
-            }
-        };
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
 
+    // بنشوف لو المستخدم قفل الرسالة قبل كده
+    const hasClosed = localStorage.getItem('saher_install_closed');
+    
+    if (!hasClosed) {
+        // نعرض الرسالة بعد ثانيتين من فتح التطبيق
+        setTimeout(() => {
+            document.getElementById('installBanner').classList.add('show');
+        }, 2000);
+    }
+});
+
+window.installApp = async function() {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+            console.log('✅ تم تثبيت التطبيق');
+            closeInstallBanner();
+        }
+        deferredPrompt = null;
+    }
+};
+
+window.closeInstallBanner = function() {
+    document.getElementById('installBanner').classList.remove('show');
+    // بنحفظ إنه قفل الرسالة عشان متظهرش تاني
+    localStorage.setItem('saher_install_closed', 'true');
+};
         // ===== تسجيل Service Worker =====
         if ('serviceWorker' in navigator) {
             const swCode = `
