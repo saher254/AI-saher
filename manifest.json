@@ -1,8 +1,9 @@
 {
-  "name": "ساهر AI | المساعد الذكي",
+  "name": "ساهر AI",
   "short_name": "ساهر AI",
-  "description": "مساعدك الذكي في منصة البكالوريا",
+  "description": "مساعدك الذكي",
   "start_url": "./saher.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#0d1117",
   "theme_color": "#58a6ff",
