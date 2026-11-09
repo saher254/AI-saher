@@ -2,7 +2,7 @@
   "name": "ساهر AI",
   "short_name": "ساهر AI",
   "description": "مساعدك الذكي",
-  "start_url": "./saher.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0d1117",
