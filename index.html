@@ -14,6 +14,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#58a6ff">
     <link rel="apple-touch-icon" href="saher-image-1794244050548.png">
+
     <style>
         :root[data-theme="dark"] {
             --bg-body: #0d1117; --bg-panel: #161b22; --bg-panel-light: #21262d;
@@ -118,8 +119,33 @@
         .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; display: none; }
         .overlay.show { display: block; }
 
+        /* ===== التعديل الجديد للموبايل عشان الرسالة تاخد الشاشة كلها ===== */
         @media (max-width: 600px) {
-            .msg { max-width: 92%; }
+            .msg { 
+                max-width: 100% !important; 
+                flex-direction: column !important; /* نخلي الأيقونة فوق والكلام تحت */
+                gap: 5px !important;
+            }
+            .msg.user { 
+                align-items: flex-end; /* رسائل المستخدم على اليمين */
+            }
+            .msg.bot { 
+                align-items: flex-start; /* رسائل ساهر على الشمال */
+            }
+            .msg-avatar { 
+                width: 28px !important; 
+                height: 28px !important; 
+                font-size: 0.9rem !important; 
+                margin-bottom: 2px;
+            }
+            .msg-bubble { 
+                width: 100%; /* الكلام ياخد العرض كله */
+                padding: 12px 16px !important;
+                font-size: 0.95rem !important;
+            }
+            .chat-img { max-width: 100%; }
+            
+            /* ظبط الهيدر */
             .brand { font-size: 1.1rem; }
             .welcome h2 { font-size: 1.6rem; }
             .chat-area { padding: 15px; gap: 15px; }
@@ -210,12 +236,11 @@
         let loadingDB = true;
         let selectedImageBase64 = null;
         
-        // المحادثات هتتحفظ في المتصفح
+        // المحادثات في المتصفح
         let allChats = JSON.parse(localStorage.getItem('saher_chats_v5')) || [];
         let currentChatId = null;
         let currentChatHistory = [];
 
-        // تعليمات النظام عشان ساهر يتصرف كـ AI حقيقي وشخصيته ساهر
         const SYSTEM_PROMPT = `أنت "ساهر"، مساعد ذكاء اصطناعي ذكي جداً وودود.
         قواعدك:
         1. أول رسالة في أي محادثة جديدة، تقول: "أنا ساهر، هنا لمساعدتك!"
@@ -266,8 +291,6 @@
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('show');
         }
-
-        // ===== تحميل وحفظ المحادثات في المتصفح =====
         function loadChatsFromStorage() {
             allChats = JSON.parse(localStorage.getItem('saher_chats_v5')) || [];
             renderHistoryList();
@@ -277,7 +300,7 @@
             localStorage.setItem('saher_chats_v5', JSON.stringify(allChats));
         }
 
-                function renderHistoryList() {
+        function renderHistoryList() {
             const list = document.getElementById('chatHistoryList');
             list.innerHTML = '';
             if (allChats.length === 0) {
@@ -476,7 +499,6 @@
             return JSON.stringify(response);
         }
 
-        // حفظ المحادثة في المتصفح (localStorage)
         function saveChatToStorage(userQ, botA, imageBase64 = null) {
             let userMessageObj = { role: "user", content: userQ };
             if (imageBase64) userMessageObj.image = imageBase64;
@@ -493,13 +515,13 @@
                     messages: [],
                     date: new Date().toISOString()
                 };
-                allChats.unshift(chat); // الأحدث في الأول
+                allChats.unshift(chat);
             }
 
             chat.messages.push({ role: 'user', content: userQ, image: imageBase64 || null });
             chat.messages.push({ role: 'assistant', content: botA });
 
-            // نحتفظ بآخر 5 محادثات بس
+            // الاحتفاظ بآخر 5 محادثات فقط
             if (allChats.length > 5) {
                 allChats = allChats.slice(0, 5);
             }
@@ -543,11 +565,18 @@
 
         // ===== تسجيل Service Worker =====
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered'))
-                    .catch(err => console.error('Service Worker registration failed:', err));
-            });
+            const swCode = `
+                self.addEventListener("install", (e) => self.skipWaiting());
+                self.addEventListener("activate", (e) => e.waitUntil(clients.claim()));
+                self.addEventListener("fetch", (e) => {
+                    if (e.request.method === "GET") e.respondWith(fetch(e.request));
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            const swUrl = URL.createObjectURL(blob);
+            navigator.serviceWorker.register(swUrl).then(() => {
+                console.log('Service Worker registered successfully!');
+            }).catch(err => console.error('SW failed:', err));
         }
 
         // ===== بدء التشغيل =====
@@ -559,3 +588,4 @@
     </script>
 </body>
 </html>
+        
