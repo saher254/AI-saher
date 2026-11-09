@@ -41,12 +41,7 @@
         body { background: var(--bg-body); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
         /* ===== الشريط الجانبي ===== */
-        .sidebar {
-            width: 280px; background: var(--bg-panel); border-left: 1px solid var(--border-color);
-            display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: fixed; top: 0; bottom: 0; right: -280px; z-index: 1000;
-            padding-top: env(safe-area-inset-top, 0px);
-        }
+        .sidebar { width: 280px; background: var(--bg-panel); border-left: 1px solid var(--border-color); display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: fixed; top: 0; bottom: 0; right: -280px; z-index: 1000; padding-top: env(safe-area-inset-top, 0px); }
         .sidebar.open { transform: translateX(-280px); }
         .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
         .sidebar-header h3 { font-size: 1.1rem; font-weight: 700; }
@@ -103,29 +98,10 @@
 
         /* ===== منطقة الإدخال ===== */
         .input-area { padding: 10px 20px; padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px)); background: var(--bg-header); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); z-index: 10; }
-        
-        /* صندوق المعاينة فوق خانة الكتابة */
-        .image-preview-box {
-            display: none; /* مخفي لحد ما يختار صورة */
-            width: fit-content;
-            background: var(--bg-panel-light);
-            border-radius: 12px;
-            padding: 8px;
-            margin-bottom: 10px;
-            position: relative;
-            border: 1px solid var(--border-color);
-        }
+        .image-preview-box { display: none; width: fit-content; background: var(--bg-panel-light); border-radius: 12px; padding: 8px; margin-bottom: 10px; position: relative; border: 1px solid var(--border-color); }
         .image-preview-box.active { display: block; }
-        .image-preview-box img {
-            width: 60px; height: 60px; border-radius: 8px; object-fit: cover; display: block;
-        }
-        .remove-preview-btn {
-            position: absolute; top: -8px; right: -8px;
-            background: var(--danger); color: white; border: none; border-radius: 50%;
-            width: 22px; height: 22px; font-size: 10px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        }
+        .image-preview-box img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; display: block; }
+        .remove-preview-btn { position: absolute; top: -8px; right: -8px; background: var(--danger); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
         .input-container { width: 100%; max-width: 800px; margin: auto; display: flex; align-items: center; gap: 10px; }
         .action-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color); }
@@ -185,21 +161,14 @@
                 <h2>أهلاً بك في AI ساهر</h2>
                 <p>مساعدك الذكي الذي يتعلم منك ومن كل المستخدمين. اسألني أي حاجة في أي مجال، وأنا هحاول أجاوبك.</p>
                 <div class="suggestions">
-                    <div class="suggestion-card" onclick="fillAndAsk('ما هي عاصمة مصر')">
-                        <i class="fas fa-lightbulb"></i> <span>ما هي عاصمة مصر</span>
-                    </div>
-                    <div class="suggestion-card" onclick="fillAndAsk('ازيك')">
-                        <i class="fas fa-lightbulb"></i> <span>ازيك</span>
-                    </div>
-                    <div class="suggestion-card" onclick="fillAndAsk('اشرحلي البرمجة ببساطة')">
-                        <i class="fas fa-lightbulb"></i> <span>اشرحلي البرمجة ببساطة</span>
-                    </div>
+                    <div class="suggestion-card" onclick="fillAndAsk('ما هي عاصمة مصر')"><i class="fas fa-lightbulb"></i> <span>ما هي عاصمة مصر</span></div>
+                    <div class="suggestion-card" onclick="fillAndAsk('ازيك')"><i class="fas fa-lightbulb"></i> <span>ازيك</span></div>
+                    <div class="suggestion-card" onclick="fillAndAsk('اشرحلي البرمجة ببساطة')"><i class="fas fa-lightbulb"></i> <span>اشرحلي البرمجة ببساطة</span></div>
                 </div>
             </div>
         </div>
 
         <div class="input-area">
-            <!-- صندوق معاينة الصورة (فوق خانة الكتابة) -->
             <div class="image-preview-box" id="imagePreviewBox">
                 <img id="imagePreviewImg" src="" alt="Preview">
                 <button class="remove-preview-btn" onclick="removeImagePreview()"><i class="fas fa-times"></i></button>
@@ -224,7 +193,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, addDoc, doc, deleteDoc, query, where, orderBy, limit, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAUmHcm0d0ErUph8l132llavVcUfwHWfic",
@@ -237,28 +206,26 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const knowledgeCol = collection(db, "knowledge");
-        const chatsCol = collection(db, "chats");
 
         let memory = [];
         let loadingDB = true;
         let selectedImageBase64 = null;
         
-        let userId = localStorage.getItem('saher_user_id');
-        if (!userId) {
-            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            localStorage.setItem('saher_user_id', userId);
-        }
-
-        let allChats = [];
+        // المحادثات هتتحفظ في المتصفح
+        let allChats = JSON.parse(localStorage.getItem('saher_chats_v5')) || [];
         let currentChatId = null;
         let currentChatHistory = [];
 
-        const SYSTEM_PROMPT = `أنت "ساهر"، مساعد ذكي عام وودود.
+        // تعليمات النظام عشان ساهر يتصرف كـ AI حقيقي وشخصيته ساهر
+        const SYSTEM_PROMPT = `أنت "ساهر"، مساعد ذكاء اصطناعي ذكي جداً وودود.
         قواعدك:
-        1. جاوب على أي سؤال يسأله المستخدم، سواء كان دراسي، عام، تقني، ثقافي، ديني، رياضي، أو ترفيهي.
-        2. خليك مفيد ومباشر في إجاباتك.
-        3. لو السؤال مش واضح، اسأل المستخدم يوضح.
-        4. إجاباتك تكون مختصرة وكافية.`;
+        1. أول رسالة في أي محادثة جديدة، تقول: "أنا ساهر، هنا لمساعدتك!"
+        2. لو حد سألك "مين انت" أو "من انت" أو "اسمك إيه"، ترد: "أنا ساهر، مساعدك الذكي."
+        3. جاوب على أي سؤال يسأله المستخدم، سواء كان دراسي، عام، تقني، ثقافي، ديني، رياضي، أو ترفيهي.
+        4. خليك مفيد ومباشر في إجاباتك، زي أفضل مساعد ذكاء اصطناعي في العالم.
+        5. استخدم لغة عربية سليمة ومفهومة.
+        6. لو السؤال مش واضح، اسأل المستخدم يوضح.
+        7. إجاباتك تكون مختصرة وكافية.`;
 
         function normalize(t) { return t.toLowerCase().trim().replace(/[؟?!.,،؛:]/g, "").replace(/[إأآا]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه").replace(/\s+/g, " ").trim(); }
         const STOP = ["ما","هي","هو","هم","في","من","عن","على","الى","إلى","ايه","إيه","ال","هل","كان","كانت","يا","بس","دي","ده","دا","اللي"];
@@ -300,17 +267,18 @@
             document.getElementById('sidebar').classList.toggle('open');
             document.getElementById('overlay').classList.toggle('show');
         }
-        async function loadChatsFromDB() {
-            try {
-                const q = query(chatsCol, where("userId", "==", userId), orderBy("date", "desc"), limit(5));
-                const snap = await getDocs(q);
-                allChats = [];
-                snap.forEach(d => { allChats.push({ id: d.id, ...d.data() }); });
-                renderHistoryList();
-            } catch (e) { console.error("خطأ في تحميل السجل:", e); }
+
+        // ===== تحميل وحفظ المحادثات في المتصفح =====
+        function loadChatsFromStorage() {
+            allChats = JSON.parse(localStorage.getItem('saher_chats_v5')) || [];
+            renderHistoryList();
         }
 
-        function renderHistoryList() {
+        function saveChatsToStorage() {
+            localStorage.setItem('saher_chats_v5', JSON.stringify(allChats));
+        }
+
+                function renderHistoryList() {
             const list = document.getElementById('chatHistoryList');
             list.innerHTML = '';
             if (allChats.length === 0) {
@@ -328,19 +296,17 @@
             });
         }
 
-        window.deleteChat = async function(e, id) {
+        window.deleteChat = function(e, id) {
             e.stopPropagation();
             if(confirm("هل تريد مسح هذه المحادثة من السجل؟")) {
-                try {
-                    await deleteDoc(doc(db, "chats", id));
-                    allChats = allChats.filter(c => c.id !== id);
-                    if (currentChatId === id) startNewChat();
-                    else renderHistoryList();
-                } catch (error) { console.error("خطأ في المسح:", error); }
+                allChats = allChats.filter(c => c.id !== id);
+                saveChatsToStorage();
+                if (currentChatId === id) startNewChat();
+                else renderHistoryList();
             }
         }
 
-        window.loadChat = async function(id) {
+        window.loadChat = function(id) {
             const chat = allChats.find(c => c.id === id);
             if (!chat) return;
             currentChatId = id;
@@ -365,7 +331,7 @@
         window.startNewChat = function() {
             currentChatId = null;
             currentChatHistory = [];
-            removeImagePreview(); // نمسح أي صورة معلقة
+            removeImagePreview();
             document.getElementById('chatArea').innerHTML = `
                 <div class="welcome" id="welcomeScreen">
                     <div class="welcome-icon"><i class="fas fa-star"></i></div>
@@ -422,7 +388,6 @@
             ask();
         }
 
-        // اختيار الصورة (تظهر في المعاينة بس)
         window.handleImageSelect = function(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
@@ -435,7 +400,6 @@
             }
         };
 
-        // مسح الصورة من المعاينة
         window.removeImagePreview = function() {
             selectedImageBase64 = null;
             document.getElementById('imageInput').value = '';
@@ -450,34 +414,27 @@
             if (!question && !selectedImageBase64) return;
 
             const finalQuestion = question || "اشرح لي هذه الصورة وحل أي واجب فيها";
-            input.value = "";
+            input.value = ""; // مسح خانة الكتابة فوراً
             
             const sendBtn = document.getElementById("sendBtn");
             sendBtn.disabled = true;
 
-            // لو فيه صورة نرسلها كرسالة أولاً
-            if (selectedImageBase64) {
-                addMessage(selectedImageBase64, true, true);
-            }
-            // نرسل السؤال
+            if (selectedImageBase64) addMessage(selectedImageBase64, true, true);
             addMessage(finalQuestion, true);
             
             showTyping();
-
             let isImageQuery = selectedImageBase64 !== null;
             const imgToSave = selectedImageBase64;
 
-            // نمسح الصورة من المعاينة فوراً عشان تختفي
             removeImagePreview();
 
-            // الأولوية لقاعدة البيانات (لو مفيش صورة)
             if (!isImageQuery && !loadingDB) {
                 const match = findBestMatch(finalQuestion);
                 if (match) {
                     setTimeout(() => {
                         hideTyping();
                         addMessage(match.answer, false);
-                        saveChatToDB(finalQuestion, match.answer);
+                        saveChatToStorage(finalQuestion, match.answer);
                         sendBtn.disabled = false;
                     }, 300);
                     return;
@@ -490,7 +447,7 @@
                     hideTyping();
                     let aiReply = extractReply(response);
                     addMessage(aiReply, false);
-                    saveChatToDB("[📸 صورة] " + finalQuestion, aiReply, imgToSave);
+                    saveChatToStorage("[📸 صورة] " + finalQuestion, aiReply, imgToSave);
                 } else {
                     currentChatHistory.push({ role: "user", content: finalQuestion });
                     if (currentChatHistory.length > 10) currentChatHistory = currentChatHistory.slice(-10);
@@ -499,7 +456,7 @@
                     hideTyping();
                     let aiReply = extractReply(response);
                     addMessage(aiReply, false);
-                    saveChatToDB(finalQuestion, aiReply);
+                    saveChatToStorage(finalQuestion, aiReply);
                 }
             } catch (error) {
                 hideTyping();
@@ -520,46 +477,36 @@
             return JSON.stringify(response);
         }
 
-        async function saveChatToDB(userQ, botA, imageBase64 = null) {
+        // حفظ المحادثة في المتصفح (localStorage)
+        function saveChatToStorage(userQ, botA, imageBase64 = null) {
             let userMessageObj = { role: "user", content: userQ };
             if (imageBase64) userMessageObj.image = imageBase64;
             
             currentChatHistory.push(userMessageObj);
             currentChatHistory.push({ role: "assistant", content: botA });
 
-            try {
-                if (!currentChatId) {
-                    const title = userQ.substring(0, 30) + (userQ.length > 30 ? '...' : '');
-                    const docRef = await addDoc(chatsCol, {
-                        userId: userId,
-                        title: title,
-                        messages: [
-                            { role: "user", content: userQ, image: imageBase64 || null },
-                            { role: "assistant", content: botA }
-                        ],
-                        date: new Date()
-                    });
-                    currentChatId = docRef.id;
-                    allChats.unshift({ id: docRef.id, title: title, messages: currentChatHistory, date: new Date() });
-                } else {
-                    const chatRef = doc(db, "chats", currentChatId);
-                    await updateDoc(chatRef, { messages: currentChatHistory });
-                    const chatIndex = allChats.findIndex(c => c.id === currentChatId);
-                    if (chatIndex !== -1) allChats[chatIndex].messages = currentChatHistory;
-                }
-
-                if (allChats.length > 5) {
-                    const chatsToDelete = allChats.slice(5);
-                    for (let c of chatsToDelete) {
-                        await deleteDoc(doc(db, "chats", c.id));
-                    }
-                    allChats = allChats.slice(0, 5);
-                }
-
-                renderHistoryList();
-            } catch (e) {
-                console.error("خطأ في حفظ المحادثة:", e);
+            let chat = allChats.find(c => c.id === currentChatId);
+            if (!chat) {
+                currentChatId = 'chat_' + Date.now();
+                chat = {
+                    id: currentChatId,
+                    title: userQ.substring(0, 30) + (userQ.length > 30 ? '...' : ''),
+                    messages: [],
+                    date: new Date().toISOString()
+                };
+                allChats.unshift(chat); // الأحدث في الأول
             }
+
+            chat.messages.push({ role: 'user', content: userQ, image: imageBase64 || null });
+            chat.messages.push({ role: 'assistant', content: botA });
+
+            // نحتفظ بآخر 5 محادثات بس
+            if (allChats.length > 5) {
+                allChats = allChats.slice(0, 5);
+            }
+
+            saveChatsToStorage();
+            renderHistoryList();
         }
 
         // ===== كود تثبيت التطبيق (PWA) =====
@@ -595,12 +542,21 @@
             }
         };
 
+        // ===== تسجيل Service Worker =====
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            });
+        }
+
+        // ===== بدء التشغيل =====
         window.addEventListener('load', async () => {
             await loadDB();
-            await loadChatsFromDB();
+            loadChatsFromStorage();
         });
 
     </script>
 </body>
 </html>
-        
