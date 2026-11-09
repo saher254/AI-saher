@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>AI ساهر</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- مكتبة Puter للذكاء الاصطناعي -->
+    <script src="https://js.puter.com/v2/"></script>
+
     <style>
         * { font-family: 'Tajawal', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -18,7 +22,6 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            /* تمت إزالة overflow: hidden و height: 100dvh للسكرول الطبيعي */
         }
 
         /* الهيدر - ثابت فوق */
@@ -66,10 +69,10 @@
             50% { opacity: 0.6; transform: scale(1.2); }
         }
 
-        /* منطقة الدردشة - سكرول طبيعي للصفحة كلها */
+        /* منطقة الدردشة */
         .chat-area {
             flex: 1;
-            padding: 24px 20px 120px; /* مسافة تحت عشان شريط الإدخال */
+            padding: 24px 20px 120px;
             display: flex;
             flex-direction: column;
             gap: 18px;
@@ -392,7 +395,7 @@
             <div class="examples">
                 <button class="example-btn" onclick="fillInput('ما هي عاصمة مصر')">💡 ما هي عاصمة مصر</button>
                 <button class="example-btn" onclick="fillInput('ازيك')">💡 ازيك</button>
-                <button class="example-btn" onclick="fillInput('ما هي عاصمة البرازيل والسعودية')">💡 ما هي عاصمة البرازيل والسعودية</button>
+                <button class="example-btn" onclick="fillInput('اشرحلي البرمجة ببساطة')">💡 اشرحلي البرمجة ببساطة</button>
             </div>
         </div>
     </div>
@@ -438,7 +441,7 @@ const pendingCol = collection(db, "pending");
 let memory = [];
 let loading = true;
 
-// ===== أدوات =====
+// ===== أدوات البحث المحلي (احتياطي) =====
 function normalize(t) {
     return t.toLowerCase().trim()
         .replace(/[؟?!.,،؛:]/g, "")
@@ -497,21 +500,6 @@ function findBest(text) {
     return best ? { ...best, score } : null;
 }
 
-function splitQuestions(q) {
-    let parts = [q.replace(/\s+/g, " ").trim()];
-    const seps = [/ و(?=\S)/g, / أو(?=\S)/g, / ثم(?=\S)/g, /[،,]/g];
-    for (let sep of seps) {
-        const np = [];
-        for (let p of parts) np.push(...p.split(sep).map(s => s.trim()).filter(s => s.length > 0));
-        parts = np;
-    }
-    parts = parts.filter(p => p.length >= 2);
-    if (parts.length <= 1 || parts.length > 5) return [q];
-    const first = parts[0].split(" ");
-    const prefix = first.length >= 2 ? first.slice(0, -1).join(" ") : "";
-    return parts.map((p, i) => i === 0 ? p : (prefix && !p.startsWith(prefix) ? prefix + " " + p : p));
-}
-
 async function loadKnowledge() {
     try {
         const snap = await getDocs(knowledgeCol);
@@ -544,12 +532,12 @@ async function logUnanswered(text) {
                 createdAt: new Date(), lastAsked: new Date()
             });
         }
-        console.log("✅ تم تسجيل السؤال بدون إجابة");
     } catch (e) {
         console.error("❌ خطأ في التسجيل:", e);
     }
 }
 
+// ===== واجهة =====
 window.fillInput = function(text) {
     document.getElementById("userInput").value = text;
     document.getElementById("userInput").focus();
@@ -587,7 +575,6 @@ function addMessage(text, isUser) {
         <div class="msg-bubble">${esc(text)}</div>
     `;
     chat.appendChild(div);
-    // النزول لآخر الصفحة بعد إضافة الرسالة
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
@@ -598,7 +585,6 @@ function showTyping() {
     div.id = "typingMsg";
     div.innerHTML = `<div class="msg-avatar">🤖</div><div class="typing"><span></span><span></span><span></span></div>`;
     chat.appendChild(div);
-    // النزول لآخر الصفحة عشان مؤشر الكتابة يبان
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
@@ -606,26 +592,6 @@ function hideTyping() {
     const t = document.getElementById("typingMsg");
     if (t) t.remove();
 }
-
-window.fillInput = function(text) {
-    document.getElementById("userInput").value = text;
-    document.getElementById("userInput").focus();
-};
-
-window.openModal = function() {
-    document.getElementById("addModal").classList.add("show");
-    setTimeout(() => document.getElementById("newQ").focus(), 100);
-};
-
-window.closeModal = function() {
-    document.getElementById("addModal").classList.remove("show");
-    document.getElementById("newQ").value = "";
-    document.getElementById("newA").value = "";
-};
-
-document.getElementById("addModal").addEventListener("click", e => {
-    if (e.target.id === "addModal") closeModal();
-});
 
 window.submitSuggestion = async function() {
     const q = document.getElementById("newQ").value.trim();
@@ -653,6 +619,7 @@ window.submitSuggestion = async function() {
     }
 };
 
+// ===== دالة السؤال المطورة بـ Puter AI =====
 window.ask = async function() {
     const input = document.getElementById("userInput");
     const question = input.value.trim();
@@ -661,62 +628,58 @@ window.ask = async function() {
     input.value = "";
     addMessage(question, true);
 
-    if (loading) {
-        addMessage("⏳ جاري تحميل قاعدة المعرفة...", false);
-        return;
-    }
-
-    const mathClean = question.replace(/\s+/g, "").replace(/×/g, "*").replace(/÷/g, "/");
-    if (/^[0-9]+[\+\-\*\/][0-9]+$/.test(mathClean)) {
-        try {
-            addMessage("🤖 الناتج: " + eval(mathClean), false);
-            return;
-        } catch (e) {}
-    }
-
-    if (memory.length === 0) {
-        addMessage("🤖 قاعدة البيانات فاضية. علّمني أول معلومة!", false);
-        return;
-    }
-
-    showTyping();
-    await new Promise(r => setTimeout(r, 400));
-    hideTyping();
-
-    const parts = splitQuestions(question);
-
-    if (parts.length === 1) {
+    // 1. الأولوية للبحث في قاعدة البيانات لو السؤال مطابق بنسبة عالية جداً
+    if (!loading && memory.length > 0) {
         const result = findBest(question);
-        if (result && result.score >= 0.70) {
+        if (result && result.score >= 0.85) { 
             addMessage("🤖 " + result.answer, false);
-        } else {
-            addMessage("🤖 برمجني على المعلومة دي الأول 😅", false);
-            logUnanswered(question);
+            return;
         }
-        return;
     }
 
-    const results = parts.map(p => {
-        const r = findBest(p);
-        return { part: p, answer: r && r.score >= 0.70 ? r.answer : null };
-    });
+    // 2. استخدام Puter AI للرد على أي سؤال آخر
+    showTyping();
+    
+    try {
+        // استخدام موديل Gemini 2.5 Flash السريع
+        const response = await puter.ai.chat(question, {
+            model: 'google/gemini-2.5-flash'
+        });
 
-    const found = results.filter(r => r.answer);
-    const notFound = results.filter(r => !r.answer);
+        hideTyping();
 
-    if (found.length === 0) {
-        addMessage("🤖 برمجني على المعلومات دي الأول 😅", false);
-        logUnanswered(question);
-    } else if (notFound.length === 0) {
-        let msg = "🤖 إليك الإجابات:\n\n";
-        found.forEach((r, i) => msg += `${i + 1}. ${r.answer}\n`);
-        addMessage(msg.trim(), false);
-    } else {
-        let msg = "🤖 إليك ما أعرفه:\n\n";
-        found.forEach((r, i) => msg += `${i + 1}. ${r.answer}\n`);
-        msg += "\n❓ أما عن: " + notFound.map(r => `"${r.part}"`).join(" و ") + " — فبرمجني عليه أولاً 😅";
-        addMessage(msg, false);
-        notFound.forEach(r => logUnanswered(r.part));
+        // استخراج النص من الرد
+        let aiReply = "";
+        if (typeof response === 'string') {
+            aiReply = response;
+        } else if (response && response.message && response.message.content) {
+            if (Array.isArray(response.message.content)) {
+                aiReply = response.message.content.map(c => c.text || "").join("");
+            } else {
+                aiReply = response.message.content;
+            }
+        } else if (response && response.text) {
+            aiReply = response.text;
+        } else {
+            aiReply = JSON.stringify(response);
+        }
+
+        addMessage("🤖 " + aiReply, false);
+
+    } catch (error) {
+        hideTyping();
+        console.error("❌ خطأ في Puter AI:", error);
+        
+        // 3. خطة احتياطية: البحث في الذاكرة المحلية
+        if (!loading && memory.length > 0) {
+            const result = findBest(question);
+            if (result && result.score >= 0.70) {
+                addMessage("🤖 " + result.answer, false);
+                return;
+            }
+        }
+        
+        addMessage("🤖 عذراً، حصلت مشكلة في الاتصال بالذكاء الاصطناعي. حاول تاني.", false);
     }
 };
 
