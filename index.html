@@ -588,7 +588,6 @@
                     saveChatToStorage("[📸 صورة] " + finalQuestion, aiReply, imgToSave);
                 } else {
                     currentChatHistory.push({ role: "user", content: finalQuestion });
-                    if (currentChatHistory.length > 10) currentChatHistory = currentChatHistory.slice(-10);
                     const messages = [ { role: "system", content: SYSTEM_PROMPT }, ...currentChatHistory ];
                     const response = await puter.ai.chat(messages, { model: 'google/gemini-2.5-flash' });
                     hideTyping();
