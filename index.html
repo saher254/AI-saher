@@ -614,37 +614,39 @@
             return JSON.stringify(response);
         }
 
-        function saveChatToStorage(userQ, botA, imageBase64 = null) {
-            let userMessageObj = { role: "user", content: userQ };
-            if (imageBase64) userMessageObj.image = imageBase64;
-            
-            currentChatHistory.push(userMessageObj);
-            currentChatHistory.push({ role: "assistant", content: botA });
+function saveChatToStorage(userQ, botA, imageBase64 = null) {
+    let chat = allChats.find(c => c.id === currentChatId);
 
-            let chat = allChats.find(c => c.id === currentChatId);
-            if (!chat) {
-                currentChatId = 'chat_' + Date.now();
-                chat = {
-                    id: currentChatId,
-                    title: userQ.substring(0, 30) + (userQ.length > 30 ? '...' : ''),
-                    messages: [],
-                    date: new Date().toISOString()
-                };
-                allChats.unshift(chat);
-            }
+    // ====== التحقق من الحد الأقصى قبل الحفظ ======
+    if (!chat && allChats.length >= 10) {
+        alert("⚠️ لقد وصلت للحد الأقصى للمحادثات (10 محادثات).\nمن فضلك احذف محادثة قديمة من السجل أولاً عشان تقدر تحفظ محادثة جديدة.");
+        toggleSidebar(); // نفتح السجل عشان المستخدم يمسح
+        return; // نوقف الحفظ هنا
+    }
+    // ==========================================
 
-            chat.messages.push({ role: 'user', content: userQ, image: imageBase64 || null });
-            chat.messages.push({ role: 'assistant', content: botA });
+    let userMessageObj = { role: "user", content: userQ };
+    if (imageBase64) userMessageObj.image = imageBase64;
+    
+    currentChatHistory.push(userMessageObj);
+    currentChatHistory.push({ role: "assistant", content: botA });
 
-            // التحقق من عدد المحادثات قبل الحفظ
-if (!chat && allChats.length >= 10) {
-    alert("⚠️ لقد وصلت للحد الأقصى للمحادثات (10 محادثات).\nمن فضلك احذف محادثة قديمة من السجل أولاً عشان تقدر تحفظ محادثة جديدة.");
-    toggleSidebar(); // نفتح السجل عشان المستخدم يمسح
-    return; // بنوقف الحفظ هنا
-}
+    if (!chat) {
+        currentChatId = 'chat_' + Date.now();
+        chat = {
+            id: currentChatId,
+            title: userQ.substring(0, 30) + (userQ.length > 30 ? '...' : ''),
+            messages: [],
+            date: new Date().toISOString()
+        };
+        allChats.unshift(chat);
+    }
 
-            saveChatsToStorage();
-            renderHistoryList();
+    chat.messages.push({ role: 'user', content: userQ, image: imageBase64 || null });
+    chat.messages.push({ role: 'assistant', content: botA });
+
+    saveChatsToStorage();
+    renderHistoryList();
         }
 
     // ===== رسالة تثبيت التطبيق =====
