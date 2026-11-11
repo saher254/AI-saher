@@ -636,10 +636,12 @@
             chat.messages.push({ role: 'user', content: userQ, image: imageBase64 || null });
             chat.messages.push({ role: 'assistant', content: botA });
 
-            // الاحتفاظ بآخر 5 محادثات فقط
-            if (allChats.length > 5) {
-                allChats = allChats.slice(0, 5);
-            }
+            // التحقق من عدد المحادثات قبل الحفظ
+if (!chat && allChats.length >= 10) {
+    alert("⚠️ لقد وصلت للحد الأقصى للمحادثات (10 محادثات).\nمن فضلك احذف محادثة قديمة من السجل أولاً عشان تقدر تحفظ محادثة جديدة.");
+    toggleSidebar(); // نفتح السجل عشان المستخدم يمسح
+    return; // بنوقف الحفظ هنا
+}
 
             saveChatsToStorage();
             renderHistoryList();
